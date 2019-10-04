@@ -4,32 +4,33 @@ import java.awt.Color;
 
 public class PixelInformation 
 {
-	private int x;
-	private int y;
+	private Point point;
 	private int sector;
 	private Color color;
+	
 	public PixelInformation(int pX,int pY,int pSector,Color pColor)
 	{
-		this.x = pX;
-		this.y = pY;
+		this.point = new Point(pX,pY);
 		this.sector = pSector;
 		this.color = pColor;
 	}
-	public int getX() 
+	public PixelInformation(Point pPoint,int pSector,Color pColor)
 	{
-		return x;
+		this.point = pPoint;
+		this.sector = pSector;
+		this.color = pColor;
 	}
-	public void setX(int pX) 
+	public Point getPoint()
 	{
-		this.x = pX;
+		return point;
 	}
-	public int getY() 
+	public void setPoint(Point pPoint)
 	{
-		return y;
+		this.point = pPoint;
 	}
-	public void setY(int pY) 
+	public void setPoint(int pX,int pY)
 	{
-		this.y = pY;
+		this.point = new Point(pX,pY);
 	}
 	public int getSector() 
 	{
@@ -49,6 +50,6 @@ public class PixelInformation
 	}
 	public String toString()
 	{
-		return "x: " + x + " y: " + y + " sector: " + sector + " color: " + color.toString();
+		return "Point: " + point.toString() + " sector: " + sector + " color: " + color.toString();
 	}
 }
