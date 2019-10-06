@@ -67,6 +67,7 @@ public class ImageReader
 
         return colorPerSector;
     }
+
 	public SectorInformation[][] getImageSectorInformation(File pFile, double pSectorPixelsPercentage) throws IOException
 	{
 		SectorInformation[][] imageSectorInformation = new SectorInformation[32][32];
@@ -85,4 +86,27 @@ public class ImageReader
 		}
 		return imageSectorInformation;
 	}
+    
+    public int getArea(ArrayList<Point> polygon){
+        Point firstItem = polygon.get(0);
+        polygon.add(firstItem);
+        float constant = (float) (1.0/2.0);
+        int positiveAnswer = 0;
+        int negativeAnswer = 0;
+        int changeSign = -1;
+        for (int firstDiagonal = 0; firstDiagonal<polygon.size()-1; firstDiagonal++){
+            Point xDiagonal = polygon.get(firstDiagonal);
+            Point yDiagonal = polygon.get(firstDiagonal+1);
+            positiveAnswer+= xDiagonal.getX() * yDiagonal.getY();            
+        }
+        for (int seconfDiagonal = 0; seconfDiagonal < polygon.size()-1; seconfDiagonal++) {
+            Point yDiagonal = polygon.get(seconfDiagonal);
+            Point xDiagonal = polygon.get(seconfDiagonal+1);
+            negativeAnswer+= yDiagonal.getY() * xDiagonal.getX(); 
+        }
+        negativeAnswer = negativeAnswer * changeSign;
+        int Area = Math.abs((int) ((positiveAnswer + negativeAnswer) * constant));
+        return Area;
+    }
+            
 }
