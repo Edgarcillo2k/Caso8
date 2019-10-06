@@ -14,6 +14,5 @@ public class Case8 {
         ArrayList<PixelInformation> pixelsInformationArrayList = new ArrayList<>(Arrays.asList(pixelsInformation));
         ArrayList<Color> colorPerSector = imageReader.getAVG(pixelsInformationArrayList);
         imageReader.getImageSectorInformation(new File("C:\\Users\\Edgar\\Desktop\\Importante\\TEC\\IV SEMESTRE\\ANALISIS DE ALGORITMOS\\pruebaImg.jpg"), 0.302);
-
     }
 }
