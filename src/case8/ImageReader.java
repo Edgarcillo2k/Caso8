@@ -77,6 +77,8 @@ public class ImageReader
 			for(int column = 0;column<DIMENSION;column++) {
 				int startOfSameSectorPixels = currentSector*numberOfPixelsPerSector;
 				int endOfSameSectorPixels = (currentSector+1)*numberOfPixelsPerSector;
+				Point initialPoint = new Point(DIMENSION * row,DIMENSION * column);
+				Point FinalPoint = new Point((DIMENSION * (row+1))-1,(DIMENSION * (column+1))-1);
 				imageSectorInformation[row][column] = new SectorInformation(currentSector,pixelsInformation,startOfSameSectorPixels,endOfSameSectorPixels);
 				currentSector++;
 			}

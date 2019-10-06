@@ -6,8 +6,10 @@ public class SectorInformation
 {
 	private int sector;
 	private double blankPercentage;
+	private Point initialPoint;
+	private Point finalPoint;
 	
-	public SectorInformation(int pSector,PixelInformation[] pPixels,int pStart, int pEnd) 
+	public SectorInformation(int pSector,PixelInformation[] pPixels,int pStart, int pEnd,Point pInitialPoint,Point pFinalPoint) 
 	{
 		this.sector = pSector;
 		double blanks = 0;
@@ -17,6 +19,24 @@ public class SectorInformation
 			}
 		}
 		this.blankPercentage = blanks/(pEnd-pStart);
+		this.initialPoint = pInitialPoint;
+		this.finalPoint = pFinalPoint;
+	}
+	public Point getInitialPoint() 
+	{
+		return initialPoint;
+	}
+	public void setInitialPoint(Point pInitialPoint) 
+	{
+		this.initialPoint = pInitialPoint;
+	}
+	public Point getFinalPoint() 
+	{
+		return finalPoint;
+	}
+	public void setFinalPoint(Point pFinalPoint) 
+	{
+		this.finalPoint = pFinalPoint;
 	}
 	public int getSector() 
 	{
