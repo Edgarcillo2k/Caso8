@@ -13,6 +13,95 @@ public class ImageReader
 	private static final int SECTOR_SIZE = 1024;
 	private static final int DIMENSION = 32;	
 	public ImageReader() {};
+	public PixelInformation[] getInflectionPoints(ArrayList<PixelInformation> pPoints)
+	{
+		PixelInformation max = new PixelInformation(new Point(0,Integer.MIN_VALUE),0,Color.white);
+		PixelInformation min = new PixelInformation(new Point(0,Integer.MAX_VALUE),0,Color.white);
+		for(int i = 0;i<pPoints.size();i++) {
+			PixelInformation puntoActual = pPoints.get(i);
+			if(puntoActual.getPoint().getY() > max.getPoint().getY()) {
+				max = puntoActual;
+			}
+			if(puntoActual.getPoint().getY() < min.getPoint().getY()) {
+				min = puntoActual;
+			}
+		}
+		PixelInformation resp[] = {max,min};
+		return resp;
+	}
+	public ArrayList<PixelInformation> prueba(Point[] pCoordinates,double pPercentage, BufferedImage pImage,int pSector)
+	{
+		int arrayLen = pCoordinates.length;
+		int numberOfPixelsPerSector = (int) (pPercentage * SECTOR_SIZE);
+		boolean flag = false;
+		int eleccion = 0;
+		ArrayList<PixelInformation> puntos = new ArrayList<PixelInformation>();
+		for(int i = 0;i<numberOfPixelsPerSector && i<arrayLen;i++) {
+			if(flag) {
+				int signo = (Math.random()*2)%2 == 0?1:-1;
+				eleccion = eleccion +  signo * (int) (Math.random() * 5);
+				if(eleccion > arrayLen || eleccion < 0) {
+					eleccion = (int) (Math.random() * arrayLen);
+				}
+			}
+			else {
+				eleccion = (int) (Math.random() * arrayLen);
+			}
+	        Point punto = pCoordinates[eleccion];
+	        Color color = new Color(pImage.getRGB(punto.getX(),punto.getY()));
+	        if(color.equals(Color.white)) {
+	        	pPercentage = pPercentage*0.5;
+	        	numberOfPixelsPerSector = (int) (pPercentage * SECTOR_SIZE);
+	        	flag = false;
+	        }
+	        
+	        else {
+	        	puntos.add(new PixelInformation(punto,pSector,color));
+	        	pPercentage += pPercentage*0.2;
+	        	flag = true;
+	        }
+	        arrayLen--;
+	        for(int j = eleccion;j<arrayLen;j++) {
+	        	pCoordinates[j] = pCoordinates[j+1];
+	        }
+		}
+		return puntos;   
+	}
+	public Point[] formarArray(Point pInitialPoint,Point pFinalPoint) throws InterruptedException
+	{
+		Point nombre[] = new Point[SECTOR_SIZE];
+		for(int i = 0;i<DIMENSION;i++) {
+			for(int j = 0;j<DIMENSION;j++) {
+				nombre[i*DIMENSION + j] = new Point(pInitialPoint.getX()+i,pInitialPoint.getY()+j);
+			}
+		}
+		return nombre;
+	}
+	public void getImagePixelsInformation(File pFile, double pSectorPixelsPercentage) throws IOException, InterruptedException 
+	{
+		BufferedImage image = ImageIO.read(pFile);
+        int numberOfPixelsPerSector = (int) (pSectorPixelsPercentage * SECTOR_SIZE);
+        ArrayList<PixelInformation> puntosInfleccion = new ArrayList<PixelInformation>(); 
+        int currentSector = 0;
+		for(int row = 0;row<DIMENSION;row++) {
+			for(int column = 0;column<DIMENSION;column++) {
+				Point initialPoint = new Point(DIMENSION * row,DIMENSION * column);
+				Point finalPoint = new Point((DIMENSION * (row+1))-1,(DIMENSION * (column+1))-1);
+		        PixelInformation[] cosa = getInflectionPoints(prueba(formarArray(initialPoint,finalPoint),pSectorPixelsPercentage,image,currentSector));
+		        if(cosa[0].getPoint().getY() < Integer.MAX_VALUE && cosa[0].getPoint().getY() > Integer.MIN_VALUE ) {
+		        puntosInfleccion.add(cosa[0]);
+		        }
+		        if(cosa[1].getPoint().getY() < Integer.MAX_VALUE && cosa[1].getPoint().getY() > Integer.MIN_VALUE ) {
+		        puntosInfleccion.add(cosa[1]);
+				}
+		        currentSector++;
+			}
+		}
+		for(int i = 0;i<puntosInfleccion.size();i++) {
+			System.out.println(puntosInfleccion.get(i).toString());
+		}
+    }
+	/*
 	public PixelInformation[] getImagePixelsInformation(File pFile, double pSectorPixelsPercentage) throws IOException 
 	{
 		BufferedImage image = ImageIO.read(pFile);
@@ -34,6 +123,7 @@ public class ImageReader
 		}
         return pixelsInformation;
     }
+    */
 
     public ArrayList<Color> getAVG(ArrayList<PixelInformation> pixelsInformation) {
         //recorrer cada elemento del Array hasta cambiar de sector
@@ -67,6 +157,7 @@ public class ImageReader
 
         return colorPerSector;
     }
+    /*
 	public SectorInformation[][] getImageSectorInformation(File pFile, double pSectorPixelsPercentage) throws IOException
 	{
 		SectorInformation[][] imageSectorInformation = new SectorInformation[32][32];
@@ -85,4 +176,5 @@ public class ImageReader
 		}
 		return imageSectorInformation;
 	}
+	*/
 }
