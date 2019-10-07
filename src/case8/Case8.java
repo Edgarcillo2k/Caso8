@@ -10,6 +10,7 @@ public class Case8 {
 
     public static void main(String[] args) throws IOException {
         ImageReader imageReader = new ImageReader();
+		imageReader.getImagePixelsInformation(new File("C:\\Users\\Edgar\\Desktop\\Importante\\TEC\\IV SEMESTRE\\ANALISIS DE ALGORITMOS\\pruebaImg.jpg"),0.3);
         //PixelInformation[] pixelsInformation = imageReader.getImagePixelsInformation(new File("C:\\Users\\Edgar\\Desktop\\Importante\\TEC\\IV SEMESTRE\\ANALISIS DE ALGORITMOS\\pruebaImg.jpg"), 0.302);
         //ArrayList<PixelInformation> pixelsInformationArrayList = new ArrayList<>(Arrays.asList(pixelsInformation));
         //ArrayList<Color> colorPerSector = imageReader.getAVG(pixelsInformationArrayList);
@@ -23,5 +24,5 @@ public class Case8 {
         ejemplo.add(x2);
         int Area = imageReader.getArea(ejemplo);
         System.out.println(Area);
-    }
+	}
 }
