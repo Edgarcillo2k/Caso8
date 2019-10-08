@@ -1,27 +1,43 @@
 package case8;
 
 import java.awt.Color;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Case8 {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        File f = new File("C:\\Users\\mario\\OneDrive\\Desktop\\Caso8Netbeans\\src\\case8\\prueba.html");
+        BufferedWriter prueba = new BufferedWriter(new FileWriter(f));
+
         ImageReader imageReader = new ImageReader();
-        //PixelInformation[] pixelsInformation = imageReader.getImagePixelsInformation(new File("C:\\Users\\Edgar\\Desktop\\Importante\\TEC\\IV SEMESTRE\\ANALISIS DE ALGORITMOS\\pruebaImg.jpg"), 0.302);
-        //ArrayList<PixelInformation> pixelsInformationArrayList = new ArrayList<>(Arrays.asList(pixelsInformation));
-        //ArrayList<Color> colorPerSector = imageReader.getAVG(pixelsInformationArrayList);
-        //imageReader.getImageSectorInformation(new File("C:\\Users\\Edgar\\Desktop\\Importante\\TEC\\IV SEMESTRE\\ANALISIS DE ALGORITMOS\\pruebaImg.jpg"), 0.302);
-        Point x0 = new Point(-2,3);
-        Point x1 = new Point(3,4);
-        Point x2 = new Point(-3,-4);
-        ArrayList<Point> ejemplo = new ArrayList<>();
-        ejemplo.add(x0);
-        ejemplo.add(x1);
-        ejemplo.add(x2);
-        int Area = imageReader.getArea(ejemplo);
-        System.out.println(Area);
+        ArrayList<ArrayList<PixelInformation>> puntosPorSector = imageReader.getImagePixelsInformation(new File("C:\\Users\\mario\\OneDrive\\Desktop\\imagenes\\deku.jpg"), 0.302);
+        String html = "<!DOCTYPE html>\n"
+                + "<html>\n"
+                + "<body>\n"
+                + "\n"
+                + "<svg height=\"2100\" width=\"2100\">";
+        for (int i = 0; i < puntosPorSector.size(); i++) {
+            ArrayList<PixelInformation> sector = puntosPorSector.get(i);
+            if (sector.size() > 0) {
+                html+= "<polygon points='";
+                for (int j = 0; j < sector.size(); j++) {
+                    Point pixel = sector.get(j).getPoint();
+                    html +=pixel.getX() + "," + pixel.getY() + " ";
+                }
+                Color color = imageReader.getAVG(sector);
+                html += "'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() +")\" />\n";
+            }
+        }
+        html += "</svg>\n"
+                + "\n"
+                + "</body>\n"
+                + "</html>";
+        prueba.write(html);
+        prueba.close();
     }
 }
