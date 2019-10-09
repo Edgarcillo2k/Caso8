@@ -1,44 +1,51 @@
 package case8;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 public class Polygon 
 {
-	private ArrayList<Point> points;
+	private ArrayList<PixelInformation> points;
+	private int sector;
+	private Color color;
 	
-	public Polygon()
+	public Polygon(int pSector)
 	{
-		this.points = new ArrayList<Point>();
+		this.points = new ArrayList<PixelInformation>();
+		this.sector = pSector;
+		this.color = null;
 	}
-	public ArrayList<Point> getPoints() 
+	public Polygon(int pSector,ArrayList<PixelInformation> pPoints)
+	{
+		this.points = pPoints;
+		this.sector = pSector;
+		this.color = getAVG(pPoints);
+	}
+	public Color getColor() 
+	{
+		return color;
+	}
+	public void setColor(Color pColor) 
+	{
+		this.color = pColor;
+	}
+	public int getSector() 
+	{
+		return sector;
+	}
+	public void setSector(int pSector) 
+	{
+		this.sector = pSector;
+	}
+	public ArrayList<PixelInformation> getPoints() 
 	{
 		return points;
 	}
-	public void setPoints(ArrayList<Point> pPoints) 
+	public void setPoints(ArrayList<PixelInformation> pPoints) 
 	{
 		this.points = pPoints;
 	}
-	public void addPoint(Point pPoint)
-	{
-		this.points.add(pPoint);
-	}
-	public void addPoint(int pX, int pY)
-	{
-		this.points.add(new Point(pX,pY));
-	}
-	public void setPoint(Point pPoint,int pIndex)
-	{
-		this.points.set(pIndex,pPoint);
-	}
-	public void setPoint(int pX, int pY,int pIndex)
-	{
-		this.points.add(pIndex,new Point(pX,pY));
-	}
-	public void removePoint(int pIndex)
-	{
-		this.points.remove(pIndex);
-	}
-	public Point getPoint(int pIndex)
+	public PixelInformation getPoint(int pIndex)
 	{
 		return points.get(pIndex);
 	}
@@ -46,4 +53,23 @@ public class Polygon
 	{
 		return points.size();
 	}
+	public Color getAVG(ArrayList<PixelInformation> pointsPerSector) {
+        int totalRed = 0;
+        int totalGreen = 0;
+        int totalBlue = 0;
+        final int SIZE = pointsPerSector.size();
+        for (int element = 0; element < SIZE; element++) {
+            int red = pointsPerSector.get(element).getColor().getRed();
+            totalRed += red;
+            int green = pointsPerSector.get(element).getColor().getGreen();
+            totalGreen += green;
+            int blue = pointsPerSector.get(element).getColor().getBlue();
+            totalBlue += blue;
+        }
+        int avgRed = totalRed / SIZE;
+        int avgGreen = totalGreen / SIZE;
+        int avgBlue = totalBlue / SIZE;
+        Color sector = new Color(avgRed, avgGreen, avgBlue);
+        return sector;
+    }
 }

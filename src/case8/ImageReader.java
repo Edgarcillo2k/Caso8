@@ -59,7 +59,7 @@ public class ImageReader
         return maxs;
     }
 
-    public ArrayList<PixelInformation> getPixelInformationPerSector(Point[] pCoordinates, double pPercentage, BufferedImage pImage, int pSector) {
+    public ArrayList<PixelInformation> getPixelsInformation(Point[] pCoordinates, double pPercentage, BufferedImage pImage, int pSector) {
         int arrayLen = pCoordinates.length;
         final int NUMBER_OF_SCAN = 10;
         double probability = 1;
@@ -86,7 +86,7 @@ public class ImageReader
         return pixelsInformation;
     }
 
-    public Point[] createImageArray(Point pInitialPoint, Point pFinalPoint) throws InterruptedException {
+    public Point[] createImageArray(Point pInitialPoint, Point pFinalPoint) {
         Point imageArray[] = new Point[SECTOR_SIZE];
         for (int row = 0; row < DIMENSION; row++) {
             for (int column = 0; column < DIMENSION; column++) {
@@ -96,41 +96,23 @@ public class ImageReader
         return imageArray;
     }
 
-    public ArrayList<ArrayList<PixelInformation>> getImagePixelsInformation(File pFile, double pSectorPixelsPercentage) throws IOException, InterruptedException {
+    public ArrayList<Polygon> getImagePolygons(File pFile, double pSectorPixelsPercentage) throws IOException {
 
         BufferedImage image = ImageIO.read(pFile);
-        ArrayList<ArrayList<PixelInformation>> inflectionPointsPerSector = new ArrayList<ArrayList<PixelInformation>>();
+        ArrayList<Polygon> polygons = new ArrayList<Polygon>();
         int currentSector = 0;
         for (int row = 0; row < DIMENSION; row++) {
             for (int column = 0; column < DIMENSION; column++) {
                 Point initialPoint = new Point(DIMENSION * row, DIMENSION * column);
                 Point finalPoint = new Point((DIMENSION * (row + 1)) - 1, (DIMENSION * (column + 1)) - 1);
-                ArrayList<PixelInformation> pixelsInformation = getPixelInformationPerSector(createImageArray(initialPoint, finalPoint), pSectorPixelsPercentage, image, currentSector);
-                ArrayList<PixelInformation> inflectionPoints = getInflectionPoints(pixelsInformation);
-                inflectionPointsPerSector.add(inflectionPoints);
+                ArrayList<PixelInformation> pixelsInformation = getPixelsInformation(createImageArray(initialPoint, finalPoint), pSectorPixelsPercentage, image, currentSector);
+                if(pixelsInformation.size()>0) {
+                	ArrayList<PixelInformation> inflectionPoints = getInflectionPoints(pixelsInformation);
+                	polygons.add(new Polygon(currentSector,inflectionPoints));
+                }
                 currentSector++;
             }
         }
-        return inflectionPointsPerSector;
-    }
-
-    public Color getAVG(ArrayList<PixelInformation> pointsPerSector) {
-        int totalRed = 0;
-        int totalGreen = 0;
-        int totalBlue = 0;
-        final int SIZE = pointsPerSector.size();
-        for (int element = 0; element < SIZE; element++) {
-            int red = pointsPerSector.get(element).getColor().getRed();
-            totalRed += red;
-            int green = pointsPerSector.get(element).getColor().getGreen();
-            totalGreen += green;
-            int blue = pointsPerSector.get(element).getColor().getBlue();
-            totalBlue += blue;
-        }
-        int avgRed = totalRed / SIZE;
-        int avgGreen = totalGreen / SIZE;
-        int avgBlue = totalBlue / SIZE;
-        Color sector = new Color(avgRed, avgGreen, avgBlue);
-        return sector;
+        return polygons;
     }
 }
