@@ -6,16 +6,15 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Case8 {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        File f = new File("C:\\Users\\mario\\OneDrive\\Desktop\\Caso8Netbeans\\src\\case8\\prueba.html");
+        File f = new File("C:\\Users\\Edgar\\Desktop\\Importante\\TEC\\IV SEMESTRE\\ANALISIS DE ALGORITMOS\\html.html");
         BufferedWriter prueba = new BufferedWriter(new FileWriter(f));
 
         ImageReader imageReader = new ImageReader();
-        ArrayList<ArrayList<PixelInformation>> puntosPorSector = imageReader.getImagePixelsInformation(new File("C:\\Users\\mario\\OneDrive\\Desktop\\imagenes\\deku.jpg"), 0.302);
+        ArrayList<ArrayList<PixelInformation>> puntosPorSector = imageReader.getImagePixelsInformation(new File("C:\\Users\\Edgar\\Desktop\\Importante\\TEC\\IV SEMESTRE\\ANALISIS DE ALGORITMOS\\goku.png"), 0.3);
         String html = "<!DOCTYPE html>\n"
                 + "<html>\n"
                 + "<body>\n"
