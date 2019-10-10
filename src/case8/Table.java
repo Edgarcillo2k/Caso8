@@ -4,27 +4,27 @@ import java.util.ArrayList;
 
 public class Table<T>
 {
-	private int totalOfPoblation;
-	ArrayList<AttributePercentage<T>> poblation;
+	private int totalOfPopulation;
+	ArrayList<AttributePercentage<T>> population;
 	public Table() 
 	{
-		this.totalOfPoblation = 0;
-		this.poblation = new ArrayList<AttributePercentage<T>>();
+		this.totalOfPopulation = 0;
+		this.population = new ArrayList<AttributePercentage<T>>();
 	}
 	public int getTotalOfPoblation() 
 	{
-		return totalOfPoblation;
+		return totalOfPopulation;
 	}
-	public void setTotalOfPoblation(int pTotalOfPoblation) 
+	public void setTotalOfPoblation(int pTotalOfPopulation) 
 	{
-		this.totalOfPoblation = pTotalOfPoblation;
+		this.totalOfPopulation = pTotalOfPopulation;
 	}
 	public ArrayList<AttributePercentage<T>> getPoblation() 
 	{
-		return poblation;
+		return population;
 	}
-	public void setPoblation(ArrayList<AttributePercentage<T>> pPoblation) 
+	public void setPoblation(ArrayList<AttributePercentage<T>> pPopulation) 
 	{
-		this.poblation = pPoblation;
+		this.population = pPopulation;
 	}
 }
