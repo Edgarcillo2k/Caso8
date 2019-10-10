@@ -52,7 +52,7 @@ public class GeneticAlgorithm
 				AttributePercentage<Sector> currentSectorAttribute = table.getPoblation().get(sector);
 				Sector currentSector = currentSectorAttribute.getAtributte();
 				double percentageOfSimilarity = percentageOfEquality(currentIndividual.getObject().getColor(),currentSector.getColor());
-				if(percentageOfSimilarity >= 95) {
+				if(percentageOfSimilarity == 100) {
 					fits.add(currentIndividual);
 				}
 				else {
@@ -64,7 +64,7 @@ public class GeneticAlgorithm
 	}
 	public void mutate(Individual<PixelInformation> pIndividual,Sector currentSector) 
 	{
-		
+		//hacerle not a un bit random segun quien sabe que xd
 	}
 	public double[] rgbToLab(int R, int G, int B) {
 
