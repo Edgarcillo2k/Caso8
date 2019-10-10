@@ -2,15 +2,22 @@ package case8;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class GeneticAlgorithm 
 {
 	private Table<Sector> table;
 	private ArrayList<Individual<PixelInformation>> population;
+	private Integer[] populationQuantityOfTable;
+	private Double[] populationPercentageOfTable;
 	public GeneticAlgorithm(Table<Sector> pTable)
 	{
 		this.table = pTable;
 		this.population = new ArrayList<Individual<PixelInformation>>();
+		this.populationQuantityOfTable = new Integer[table.getPoblation().size()];
+		this.populationPercentageOfTable = new Double[table.getPoblation().size()];
+		Arrays.fill(populationQuantityOfTable,0);
+		Arrays.fill(populationPercentageOfTable,0.0);
 	}
 	public Table<Sector> getTable() 
 	{
@@ -35,9 +42,11 @@ public class GeneticAlgorithm
 			for(int sector = 0;sector<table.getPoblation().size();sector++) {
 				AttributePercentage<Sector> currentSectorAttribute = table.getPoblation().get(sector);
 				Short[] currentGenotype = currentSectorAttribute.getGenotype();
-				if(genotype >= currentGenotype[0] && genotype<currentGenotype[1]) {
+				if(genotype >= currentGenotype[0] && genotype<currentGenotype[1]) {					
 					Sector currentSector = currentSectorAttribute.getAtributte();
 					population.add(new Individual<PixelInformation>(new PixelInformation(currentSector.getRandomPoint(),currentSector.getSector(),currentSector.getColor()),genotype));
+					populationQuantityOfTable[sector]++;
+					populationPercentageOfTable[sector] = populationQuantityOfTable[sector]/(double)population.size();
 					break;
 				}
 			}
@@ -52,7 +61,7 @@ public class GeneticAlgorithm
 				AttributePercentage<Sector> currentSectorAttribute = table.getPoblation().get(sector);
 				Sector currentSector = currentSectorAttribute.getAtributte();
 				double percentageOfSimilarity = percentageOfEquality(currentIndividual.getObject().getColor(),currentSector.getColor());
-				if(percentageOfSimilarity == 100) {
+				if(percentageOfSimilarity == 100 && populationPercentageOfTable[sector]<currentSectorAttribute.getPercentage()) {
 					fits.add(currentIndividual);
 				}
 				else {
