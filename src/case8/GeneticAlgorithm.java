@@ -30,14 +30,15 @@ public class GeneticAlgorithm
 	public void createPopulation(int pNumberOfIndividuals) 
 	{
 		for(int individual = 0;individual<pNumberOfIndividuals;individual++) {
+			boolean flag = false;
 			short genotype = (short)(Math.random()*Short.MAX_VALUE);
 			for(int sector = 0;sector<table.getPoblation().size();sector++) {
 				AttributePercentage<Sector> currentSectorAttribute = table.getPoblation().get(sector);
 				Short[] currentGenotype = currentSectorAttribute.getGenotype();
-				if(genotype > currentGenotype[0] && genotype<currentGenotype[1]) {
+				if(genotype >= currentGenotype[0] && genotype<currentGenotype[1]) {
 					Sector currentSector = currentSectorAttribute.getAtributte();
 					population.add(new PixelInformation(currentSector.getRandomPoint(),currentSector.getSector(),currentSector.getColor()));
-					System.out.println(population.get(population.size()-1).toString());
+					flag = true;
 					break;
 				}
 			}
