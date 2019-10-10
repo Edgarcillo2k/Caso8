@@ -35,26 +35,6 @@ public class ImageReader
                 mins.add(currentPoint);
             }
         }
-        for (int i = 0; i < maxs.size(); i++) {
-            for (int j = 0; j < maxs.size() - 1; j++) {
-                PixelInformation current = maxs.get(j);
-                PixelInformation next = maxs.get(j + 1);
-                if (current.getPoint().getX() > next.getPoint().getX()) {
-                    maxs.set(j + 1, current);
-                    maxs.set(j, next);
-                }
-            }
-        }
-        for (int i = 0; i < mins.size(); i++) {
-            for (int j = 0; j < mins.size() - 1; j++) {
-                PixelInformation current = mins.get(j);
-                PixelInformation next = mins.get(j + 1);
-                if (current.getPoint().getX() < next.getPoint().getX()) {
-                    mins.set(j + 1, current);
-                    mins.set(j, next);
-                }
-            }
-        }
         maxs.addAll(mins);
         return maxs;
     }
@@ -95,7 +75,7 @@ public class ImageReader
         }
         return imageArray;
     }
-
+/*
     public ArrayList<Polygon> getImagePolygons(File pFile, double pSectorPixelsPercentage) throws IOException {
 
         BufferedImage image = ImageIO.read(pFile);
@@ -114,5 +94,38 @@ public class ImageReader
             }
         }
         return polygons;
+    }
+    */
+    public Table<Sector> getImageTable(File pFile, double pSectorPixelsPercentage) throws IOException {
+
+        BufferedImage image = ImageIO.read(pFile);
+        Table<Sector> sectorGenotype = new Table<Sector>();
+        ArrayList<AttributePercentage<Sector>> sectors = new ArrayList<AttributePercentage<Sector>>();
+        int currentSector = 0;
+        for (int row = 0; row < DIMENSION; row++) {
+            for (int column = 0; column < DIMENSION; column++) {
+                Point initialPoint = new Point(DIMENSION * row, DIMENSION * column);
+                Point finalPoint = new Point((DIMENSION * (row + 1)) - 1, (DIMENSION * (column + 1)) - 1);
+                ArrayList<PixelInformation> pixelsInformation = getPixelsInformation(createImageArray(initialPoint, finalPoint), pSectorPixelsPercentage, image, currentSector);
+                if(pixelsInformation.size()>0) {
+                	ArrayList<PixelInformation> inflectionPoints = getInflectionPoints(pixelsInformation);
+                	Sector sector = new Sector(initialPoint,finalPoint,currentSector,inflectionPoints);
+                	sectorGenotype.setTotalOfPoblation(sectorGenotype.getTotalOfPoblation()+inflectionPoints.size());
+                	sectors.add(new AttributePercentage<Sector>(sector,sectorGenotype.getTotalOfPoblation(),inflectionPoints.size()));   	
+                }
+                currentSector++;
+            }
+        }
+        int initialRank = 0;
+        for(currentSector = 0;currentSector<sectors.size();currentSector++) {
+        	AttributePercentage<Sector> sector = sectors.get(currentSector);
+        	sector.setTotalOfPoblation(sectorGenotype.getTotalOfPoblation());
+        	sector.calculatePercentage();
+        	sector.calculateGenotype(initialRank);
+        	initialRank = sector.getGenotype()[1];
+        }
+        sectors.get(sectors.size()-1).setFinalRank(Short.MAX_VALUE);
+        sectorGenotype.setPoblation(sectors);
+        return sectorGenotype;
     }
 }

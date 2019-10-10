@@ -4,21 +4,44 @@ import java.util.ArrayList;
 
 public class GeneticAlgorithm 
 {
-	private ArrayList<Polygon> population;
-
-	public GeneticAlgorithm() 
+	private Table<Sector> table;
+	private ArrayList<PixelInformation> population;
+	public GeneticAlgorithm(Table<Sector> pTable)
 	{
-		this.population = new ArrayList<Polygon>();
+		this.table = pTable;
+		this.population = new ArrayList<PixelInformation>();
 	}
-	public ArrayList<Polygon> getPopulation() {
+	public Table<Sector> getTable() 
+	{
+		return table;
+	}
+	public void setTable(Table<Sector> pTable) 
+	{
+		this.table = pTable;
+	}
+	public ArrayList<PixelInformation> getPopulation() 
+	{
 		return population;
 	}
-	public void setPopulation(ArrayList<Polygon> population) {
-		this.population = population;
-	}
-	public void fitnessFunction()
+	public void setPopulation(ArrayList<PixelInformation> pPopulation) 
 	{
-		//haga algo
+		this.population = pPopulation;
+	}
+	public void createPopulation(int pNumberOfIndividuals) 
+	{
+		for(int individual = 0;individual<pNumberOfIndividuals;individual++) {
+			short genotype = (short)(Math.random()*Short.MAX_VALUE);
+			for(int sector = 0;sector<table.getPoblation().size();sector++) {
+				AttributePercentage<Sector> currentSectorAttribute = table.getPoblation().get(sector);
+				Short[] currentGenotype = currentSectorAttribute.getGenotype();
+				if(genotype > currentGenotype[0] && genotype<currentGenotype[1]) {
+					Sector currentSector = currentSectorAttribute.getAtributte();
+					population.add(new PixelInformation(currentSector.getRandomPoint(),currentSector.getSector(),currentSector.getColor()));
+					System.out.println(population.get(population.size()-1).toString());
+					break;
+				}
+			}
+		}
 	}
 	public void cross()
 	{
@@ -42,7 +65,6 @@ public class GeneticAlgorithm
 	}
 	public void run()
 	{
-		fitnessFunction();
 		cross();
 	}
 }
