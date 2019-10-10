@@ -16,6 +16,34 @@ public class HtmlWriter
 			File f = new File(pHtmlPath);
 	        BufferedWriter htmlFile = new BufferedWriter(new FileWriter(f));
 	        ImageReader imageReader = new ImageReader();
+	        Table<Sector> table = imageReader.getImageTable(new File(pImagePath), pPercentageOfPixels);
+	        GeneticAlgorithm genetic = new GeneticAlgorithm(table);
+	        genetic.createPopulation(5000);
+	        System.out.println(genetic.getPopulation().size());
+	        
+	        /*
+	         for (int i = 0; i < maxs.size(); i++) {
+            for (int j = 0; j < maxs.size() - 1; j++) {
+                PixelInformation current = maxs.get(j);
+                PixelInformation next = maxs.get(j + 1);
+                if (current.getPoint().getX() > next.getPoint().getX()) {
+                    maxs.set(j + 1, current);
+                    maxs.set(j, next);
+                }
+            }
+        }
+        for (int i = 0; i < mins.size(); i++) {
+            for (int j = 0; j < mins.size() - 1; j++) {
+                PixelInformation current = mins.get(j);
+                PixelInformation next = mins.get(j + 1);
+                if (current.getPoint().getX() < next.getPoint().getX()) {
+                    mins.set(j + 1, current);
+                    mins.set(j, next);
+                }
+            }
+        }
+	         */
+	        /*
 	        ArrayList<Polygon> polygons = imageReader.getImagePolygons(new File(pImagePath), pPercentageOfPixels);
 	        String html = "<!DOCTYPE html>\n"
 	                + "<html>\n"
@@ -36,6 +64,7 @@ public class HtmlWriter
 		    html += "</svg>\n\n</body>\n</html>";
 		    htmlFile.write(html);
 		    htmlFile.close();
+		*/
 		}
 		catch(IOException e) {
 			e.printStackTrace();
