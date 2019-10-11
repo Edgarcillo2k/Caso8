@@ -1,15 +1,19 @@
 package case8;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
 
 public class Table<T>
 {
 	private int totalOfPopulation;
-	ArrayList<AttributePercentage<T>> population;
+	HashMap<Integer, Double> population;
+
 	public Table() 
 	{
 		this.totalOfPopulation = 0;
-		this.population = new ArrayList<AttributePercentage<T>>();
+		this.population = new HashMap<>();
+
 	}
 	public int getTotalOfPoblation() 
 	{
@@ -19,11 +23,12 @@ public class Table<T>
 	{
 		this.totalOfPopulation = pTotalOfPopulation;
 	}
-	public ArrayList<AttributePercentage<T>> getPoblation() 
+
+	public HashMap<Integer, Double> getPoblation() 
 	{
 		return population;
 	}
-	public void setPoblation(ArrayList<AttributePercentage<T>> pPopulation) 
+	public void setPoblation(HashMap<Integer, Double> pPopulation) 
 	{
 		this.population = pPopulation;
 	}

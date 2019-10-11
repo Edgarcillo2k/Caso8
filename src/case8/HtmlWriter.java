@@ -22,6 +22,7 @@ public class HtmlWriter
 	        genetic.run(9);
 	        
 	        /*
+
 	         for (int i = 0; i < maxs.size(); i++) {
             for (int j = 0; j < maxs.size() - 1; j++) {
                 PixelInformation current = maxs.get(j);
@@ -42,8 +43,10 @@ public class HtmlWriter
                 }
             }
         }
+
 	         */
 	        /*
+
 	        ArrayList<Polygon> polygons = imageReader.getImagePolygons(new File(pImagePath), pPercentageOfPixels);
 	        String html = "<!DOCTYPE html>\n"
 	                + "<html>\n"
@@ -64,10 +67,12 @@ public class HtmlWriter
 		    html += "</svg>\n\n</body>\n</html>";
 		    htmlFile.write(html);
 		    htmlFile.close();
+
 		*/
 		}
 		catch(IOException e) {
 			e.printStackTrace();
 		}
 	}
+
 }
