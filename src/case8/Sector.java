@@ -59,8 +59,8 @@ public class Sector
 	}
 	public Point getRandomPoint()
 	{
-		int x = (int)(Math.random()*finalPoint.getX() + initialPoint.getX());
-		int y = (int)(Math.random()*finalPoint.getY() + initialPoint.getY());
+		int x = (int)(Math.random()*(finalPoint.getX()-initialPoint.getX()) + initialPoint.getX());
+		int y = (int)(Math.random()*(finalPoint.getY()-initialPoint.getY()) + initialPoint.getY());
 		return new Point(x,y);
 	}
 	public Color getAVG() {
