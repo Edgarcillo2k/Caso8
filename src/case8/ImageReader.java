@@ -143,7 +143,7 @@ public class ImageReader {
             
         }
         sectors.get(sectors.size() - 1).setFinalRank(GENOTYPE_LIMIT);
-        sectorGenotype.setPoblation(sectors);
+        sectorGenotype.setPoblation(hash);
         return sectorGenotype;
     }
 }
