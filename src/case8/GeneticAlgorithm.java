@@ -1,10 +1,13 @@
 package case8;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.JPanel;
 
 public class GeneticAlgorithm 
 {
@@ -57,13 +60,25 @@ public class GeneticAlgorithm
 		ArrayList<Individual<PixelInformation>> fits = new ArrayList<Individual<PixelInformation>>();
 		Color avgColorOfIndividuals = avgColorOfIndividuals();
 		for(int individual = 0;individual<population.size();individual++) {
+			Individual<PixelInformation> currentIndividual = population.get(individual);
+			
+			//dibuje los puntitos
+			miFrame pruebaFrame = new miFrame();
+	        pruebaFrame.setBounds(0, 0, 1100, 1100);
+	        JPanel panel = new JPanel();
+	        panel.setBounds(0, 0, 1024, 1024);
+	        pruebaFrame.add(panel);
+	        
+	        Graphics g = panel.getGraphics();
+	        g.setColor(currentIndividual.getObject().getColor());
+	        g.fillOval(currentIndividual.getObject().getPoint().getX(), currentIndividual.getObject().getPoint().getY(), 3, 3);
+			
+			
 			//for(int sector = 0;sector<table.getPopulation().size();sector++) {
-				Individual<PixelInformation> currentIndividual = population.get(individual);
 				double percentageOfSimilarity = percentageOfEquality(currentIndividual.getObject().getColor(),avgColorOfSectors);
 				double percentageOfSimilarityAvg = percentageOfEquality(avgColorOfIndividuals,avgColorOfSectors);
-				double operation = percentageOfSimilarity/percentageOfSimilarityAvg;
-				//System.out.println(percentageOfSimilarity + "," + percentageOfSimilarityAvg + "," + operation);
-				if(operation < 0.5) {
+				//System.out.println(percentageOfSimilarity + "," + percentageOfSimilarityAvg);
+				if(percentageOfSimilarity<percentageOfSimilarityAvg) {
 					fits.add(currentIndividual);
 				}
 			//}
@@ -214,14 +229,19 @@ public class GeneticAlgorithm
 	public void run(int pGenerations)
 	{
 		for(int currentGeneration = 1;currentGeneration<pGenerations;currentGeneration++) {
+			if(population.size()>=500000) {
+				break;
+			}
 			ArrayList<Individual<PixelInformation>> fits = fitnessFunction();
-			if(fits.size()>0) {
 			System.out.println("Gen:"+currentGeneration + ",Fits:" + fits.size() + ",Population:" + population.size()+",Sectors:"+table.getPopulation().size());
+			if(fits.size()>0) {
+			/*
 			for(int sector = 0;sector<table.getPopulation().size();sector++) {
 				this.populationQuantityOfTable.put(table.getPopulation().get(sector).getAtributte().getSector(),0);
 				this.populationPercentageOfTable.put(table.getPopulation().get(sector).getAtributte().getSector(),0.0);
 			}
 			this.population = new ArrayList<Individual<PixelInformation>>();
+			*/
 			while(fits.size()>1) {		
 				int random1 = (int)Math.random()*fits.size();
 				Individual<PixelInformation> individual1 = fits.get(random1);
@@ -232,9 +252,13 @@ public class GeneticAlgorithm
 				for(int children = 0;children<4;children++) {
 					cross(individual1,individual2);
 				}
+				if(population.size()>=500000) {
+					break;
+				}
 			}
 		}
 		}
+		
 		for (Map.Entry<Integer, Double> entry : populationPercentageOfTable.entrySet()) {
 			Integer key = entry.getKey();
 		    Double value = entry.getValue();
@@ -245,6 +269,7 @@ public class GeneticAlgorithm
 		    	}
 		    }
 		}
+		
 		
 	}
 }
