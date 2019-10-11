@@ -18,8 +18,8 @@ public class HtmlWriter
 	        ImageReader imageReader = new ImageReader();
 	        Table<Sector> table = imageReader.getImageTable(new File(pImagePath), pPercentageOfPixels);
 	        GeneticAlgorithm genetic = new GeneticAlgorithm(table);
-	        genetic.createPopulation(5000);
-	        genetic.fitnessFunction();
+	        genetic.createPopulation(500);
+	        genetic.run(9);
 	        
 	        /*
 	         for (int i = 0; i < maxs.size(); i++) {
