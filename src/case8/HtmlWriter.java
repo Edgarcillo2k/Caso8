@@ -19,7 +19,7 @@ public class HtmlWriter
 	        Table table = imageReader.getImageTable(new File(pImagePath), pPercentageOfPixels);
 	        GeneticAlgorithm genetic = new GeneticAlgorithm(table);
 	        genetic.createPopulation(60);
-	        genetic.run(100);
+	        genetic.run(500000);
 	        
 	        /*
 
