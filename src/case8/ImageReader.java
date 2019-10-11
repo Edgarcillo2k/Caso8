@@ -14,7 +14,7 @@ public class ImageReader
 {
 	private static final int SECTOR_SIZE = 1024;
 	private static final int DIMENSION = 32;	
-	private final int GENOTYPE_LIMIT = (int)Math.pow(2,16);
+	private static final int GENOTYPE_LIMIT = (int)Math.pow(2,16);
 	public ImageReader() {};
 
 	public ArrayList<PixelInformation> getInflectionPoints(ArrayList<PixelInformation> pPoints) {
@@ -105,12 +105,11 @@ public class ImageReader
     }
 
     */
-
-    public Table<Sector> getImageTable(File pFile, double pSectorPixelsPercentage) throws IOException {
+    public Table getImageTable(File pFile, double pSectorPixelsPercentage) throws IOException {
 
         BufferedImage image = ImageIO.read(pFile);
-        Table<Sector> sectorGenotype = new Table<Sector>();
-        ArrayList<AttributePercentage<Sector>> sectors = new ArrayList<AttributePercentage<Sector>>();
+        Table sectorGenotype = new Table();
+        ArrayList<AttributePercentage> sectors = new ArrayList<AttributePercentage>();
         int currentSector = 0;
         for (int row = 0; row < DIMENSION; row++) {
             for (int column = 0; column < DIMENSION; column++) {

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class Table<T>
+public class Table
 {
 	private int totalOfPopulation;
 	HashMap<Integer, Double> population;
@@ -15,11 +15,11 @@ public class Table<T>
 		this.population = new HashMap<>();
 
 	}
-	public int getTotalOfPoblation() 
+	public int getTotalOfPopulation() 
 	{
 		return totalOfPopulation;
 	}
-	public void setTotalOfPoblation(int pTotalOfPopulation) 
+	public void setTotalOfPopulation(int pTotalOfPopulation) 
 	{
 		this.totalOfPopulation = pTotalOfPopulation;
 	}
@@ -31,5 +31,13 @@ public class Table<T>
 	public void setPoblation(HashMap<Integer, Double> pPopulation) 
 	{
 		this.population = pPopulation;
+	}
+	public AttributePercentage[] getPopulationArray() 
+	{
+		return populationArray;
+	}
+	public void setPopulationArray(AttributePercentage[] pPopulation) 
+	{
+		this.populationArray = pPopulation;
 	}
 }
