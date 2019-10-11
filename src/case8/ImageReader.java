@@ -12,6 +12,7 @@ public class ImageReader
 {
 	private static final int SECTOR_SIZE = 1024;
 	private static final int DIMENSION = 32;	
+	private final int GENOTYPE_LIMIT = (int)Math.pow(2,16);
 	public ImageReader() {};
 	public ArrayList<PixelInformation> getInflectionPoints(ArrayList<PixelInformation> pPoints) {
         PixelInformation max = new PixelInformation(new Point(0, Integer.MIN_VALUE), 0, Color.white);
@@ -124,7 +125,7 @@ public class ImageReader
         	sector.calculateGenotype(initialRank);
         	initialRank = sector.getGenotype()[1];
         }
-        sectors.get(sectors.size()-1).setFinalRank(Short.MAX_VALUE);
+        sectors.get(sectors.size()-1).setFinalRank(GENOTYPE_LIMIT);
         sectorGenotype.setPoblation(sectors);
         return sectorGenotype;
     }

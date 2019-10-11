@@ -6,15 +6,15 @@ public class AttributePercentage<T>
 	private double percentage;
 	private int totalOfPoblation;
 	private int volumeOfPoblation;
-	private Short genotype[];
-	private final short GENOTYPE_LIMIT = Short.MAX_VALUE;
+	private Integer genotype[];
+	private final int GENOTYPE_LIMIT = (int)Math.pow(2,16);
 	public AttributePercentage(T pAttribute,int pTotalOfPoblation,int pVolumeOfPoblation)
 	{
 		this.atributte = pAttribute;
 		this.totalOfPoblation = pTotalOfPoblation;
 		this.volumeOfPoblation = pVolumeOfPoblation;
 		this.percentage = pVolumeOfPoblation/(double)(pTotalOfPoblation);
-		this.genotype = new Short[2];
+		this.genotype = new Integer[2];
 	}
 	public int getGENOTYPE_LIMIT() 
 	{
@@ -55,19 +55,19 @@ public class AttributePercentage<T>
 	{
 		this.percentage = volumeOfPoblation/(double)(totalOfPoblation);
 	}
-	public Short[] getGenotype() {
+	public Integer[] getGenotype() {
 		return genotype;
 	}
-	public void setGenotype(Short[] pGenotype) 
+	public void setGenotype(Integer[] pGenotype) 
 	{
 		this.genotype = pGenotype;
 	}
 	public void calculateGenotype(int pInitialRank)
 	{
-		this.genotype[0] = (short)pInitialRank;
-		this.genotype[1] = (short)(genotype[0] + percentage*GENOTYPE_LIMIT);
+		this.genotype[0] = pInitialRank;
+		this.genotype[1] = (int)(genotype[0] + percentage*GENOTYPE_LIMIT);
 	}
-	public void setFinalRank(short pFinalRank)
+	public void setFinalRank(int pFinalRank)
 	{
 		this.genotype[1] = pFinalRank;
 	}

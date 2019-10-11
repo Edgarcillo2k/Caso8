@@ -10,6 +10,7 @@ public class GeneticAlgorithm
 	private ArrayList<Individual<PixelInformation>> population;
 	private Integer[] populationQuantityOfTable;
 	private Double[] populationPercentageOfTable;
+	private final int GENOTYPE_LIMIT = (int)Math.pow(2,16);
 	public GeneticAlgorithm(Table<Sector> pTable)
 	{
 		this.table = pTable;
@@ -38,10 +39,10 @@ public class GeneticAlgorithm
 	public void createPopulation(int pNumberOfIndividuals) 
 	{
 		for(int individual = 0;individual<pNumberOfIndividuals;individual++) {
-			short genotype = (short)(Math.random()*Short.MAX_VALUE);
+			int genotype = (int)(Math.random()*GENOTYPE_LIMIT);
 			for(int sector = 0;sector<table.getPoblation().size();sector++) {
 				AttributePercentage<Sector> currentSectorAttribute = table.getPoblation().get(sector);
-				Short[] currentGenotype = currentSectorAttribute.getGenotype();
+				Integer[] currentGenotype = currentSectorAttribute.getGenotype();
 				if(genotype >= currentGenotype[0] && genotype<currentGenotype[1]) {					
 					Sector currentSector = currentSectorAttribute.getAtributte();
 					population.add(new Individual<PixelInformation>(new PixelInformation(currentSector.getRandomPoint(),currentSector.getSector(),currentSector.getColor()),genotype));
@@ -61,19 +62,47 @@ public class GeneticAlgorithm
 				AttributePercentage<Sector> currentSectorAttribute = table.getPoblation().get(sector);
 				Sector currentSector = currentSectorAttribute.getAtributte();
 				double percentageOfSimilarity = percentageOfEquality(currentIndividual.getObject().getColor(),currentSector.getColor());
-				if(percentageOfSimilarity == 100 && populationPercentageOfTable[sector]<currentSectorAttribute.getPercentage()) {
+				if(percentageOfSimilarity == 100 && populationPercentageOfTable[sector]<currentSectorAttribute.getPercentage() && !currentIndividual.isFit()) {
 					fits.add(currentIndividual);
-				}
-				else {
-					mutate(currentIndividual,currentSector);
+					currentIndividual.setFit(true);
 				}
 			}
 		}
 		return fits;
 	}
-	public void mutate(Individual<PixelInformation> pIndividual,Sector currentSector) 
+	public void cross(Individual<PixelInformation> pIndividual1,Individual<PixelInformation> pIndividual2)
+	{	final String WORD_ZEROS = "0000000000000000";
+		String[] chromosomes = {Integer.toBinaryString(pIndividual1.getGenotype()),Integer.toBinaryString(pIndividual2.getGenotype())};
+		chromosomes[0] = (WORD_ZEROS + chromosomes[0]).substring(chromosomes[0].length());
+		chromosomes[1] = (WORD_ZEROS + chromosomes[1]).substring(chromosomes[1].length());
+		String childChromosome = "";
+		for(int currentChromosome = 0;currentChromosome<chromosomes.length;currentChromosome++) {
+			for(int currentBit = 0;currentBit<WORD_ZEROS.length()/2;currentBit++) {
+				childChromosome += chromosomes[currentChromosome].charAt(currentBit);
+			}
+		}		
+		int random = (int)Math.random()*10;
+		if(random>=7) {
+			childChromosome = mutate(childChromosome);
+		}
+		int childGenotype = Integer.parseInt(childChromosome, 2);
+		for(int sector = 0;sector<table.getPoblation().size();sector++) {
+			AttributePercentage<Sector> currentSectorAttribute = table.getPoblation().get(sector);
+			Integer[] currentGenotype = currentSectorAttribute.getGenotype();
+			if(childGenotype >= currentGenotype[0] && childGenotype<currentGenotype[1]) {					
+				Sector currentSector = currentSectorAttribute.getAtributte();
+				population.add(new Individual<PixelInformation>(new PixelInformation(currentSector.getRandomPoint(),currentSector.getSector(),currentSector.getColor()),childGenotype));
+				populationQuantityOfTable[sector]++;
+				populationPercentageOfTable[sector] = populationQuantityOfTable[sector]/(double)population.size();
+				break;
+			}
+		}
+	}
+	public String mutate(String pGenotype) 
 	{
-		//hacerle not a un bit random segun quien sabe que xd
+		int random = (int)Math.random()*pGenotype.length();
+		pGenotype = pGenotype.substring(0, random) + pGenotype.charAt(random) == "1"?"0":"1" + pGenotype.substring(random + 1); 
+		return pGenotype;
 	}
 	public double[] rgbToLab(int R, int G, int B) {
 
@@ -134,8 +163,7 @@ public class GeneticAlgorithm
 	    if ( zr > 0.008856 )
 	        zr =  (float) Math.pow(zr, 1/3.);
 	    else
-	        zr = (float) ((7.787 * zr) + 16 / 116.0);
-
+	        zr = (float) ((7.787 * zr) + 16 / 116.0);    
 
 	    double[] lab = new double[3];
 
@@ -152,28 +180,27 @@ public class GeneticAlgorithm
 		double[] color2 = rgbToLab(pColor2.getRed(),pColor2.getGreen(),pColor2.getBlue());
 		return 100 - Math.sqrt(Math.pow((color1[0] - color2[0]),2) + Math.pow((color1[1] - color2[1]),2) + Math.pow((color1[2] - color2[2]),2));
 	}
-	public void cross()
+	public void run(int pGenerations)
 	{
-		/*
-		String[] chromosomes = {Integer.toBinaryString(puntoPoligono),Integer.toBinaryString(puntoPoligono2)};
-		int[] chromosomesLength = {chromosomes[0].length(), chromosomes[1].length()};
-		bool smallest =  chromosomesLength[0]>chromosomesLength[1];
-		String childChromosome = "";
-		int half = chromosomes[(!smallest)].length/2;
-		int i = 0;
-		half = half>chromosomesLength[smallest]?chromosomesLength[smallest]:half;
-		for(int j = 0;j<2;j++){
-			for(;i<half-1;i++){
-				childChromosome += chromosomes[smallest][i];
+		for(int currentGeneration = 1;currentGeneration<pGenerations;currentGeneration++) {
+			System.out.println(currentGeneration);
+			ArrayList<Individual<PixelInformation>> fits = fitnessFunction();
+			while(fits.size()>1) {		
+				int random1 = (int)Math.random()*fits.size();
+				Individual<PixelInformation> individual1 = fits.get(random1);
+				fits.remove(random1);
+				int random2 = (int)Math.random()*fits.size();
+				Individual<PixelInformation> individual2 = fits.get(random2);
+				fits.remove(random2);
+				individual1.setFit(false);
+				individual2.setFit(false);
+				for(int children = 0;children<4;children++) {
+					cross(individual1,individual2);
+				}
 			}
-			half = childChromosome.length;
-			smallest = !smallest;
 		}
-		int childPoint = Integer.parseInt(childChromosome, 2);
-        */
-	}
-	public void run()
-	{
-		cross();
+		for(int i = 0;i<populationPercentageOfTable.length;i++) {
+			System.out.println(populationPercentageOfTable[i] + "," + table.getPoblation().get(i).getPercentage());
+		}
 	}
 }

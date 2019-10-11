@@ -3,11 +3,21 @@ package case8;
 public class Individual<T>
 {
 	private T object;
-	private short genotype;
-	public Individual(T pObject,short pGenotype)
+	private int genotype;
+	private boolean fit;
+	public Individual(T pObject,int pGenotype)
 	{
 		object = pObject;
 		genotype = pGenotype;
+		fit = false;
+	}
+	public boolean isFit() 
+	{
+		return fit;
+	}
+	public void setFit(boolean pFit) 
+	{
+		this.fit = pFit;
 	}
 	public T getObject() 
 	{
@@ -17,11 +27,11 @@ public class Individual<T>
 	{
 		this.object = pObject;
 	}
-	public short getGenotype() 
+	public int getGenotype() 
 	{
 		return genotype;
 	}
-	public void setGenotype(short pGenotype) 
+	public void setGenotype(int pGenotype) 
 	{
 		this.genotype = pGenotype;
 	}
