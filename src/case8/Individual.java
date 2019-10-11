@@ -4,20 +4,10 @@ public class Individual<T>
 {
 	private T object;
 	private int genotype;
-	private boolean fit;
 	public Individual(T pObject,int pGenotype)
 	{
 		object = pObject;
 		genotype = pGenotype;
-		fit = false;
-	}
-	public boolean isFit() 
-	{
-		return fit;
-	}
-	public void setFit(boolean pFit) 
-	{
-		this.fit = pFit;
 	}
 	public T getObject() 
 	{

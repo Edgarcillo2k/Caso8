@@ -1,14 +1,14 @@
 package case8;
 
-public class AttributePercentage<T> 
+public class AttributePercentage 
 {
-	private T atributte;
+	private Sector atributte;
 	private double percentage;
 	private int totalOfPoblation;
 	private int volumeOfPoblation;
 	private Integer genotype[];
 	private final int GENOTYPE_LIMIT = (int)Math.pow(2,16);
-	public AttributePercentage(T pAttribute,int pTotalOfPoblation,int pVolumeOfPoblation)
+	public AttributePercentage(Sector pAttribute,int pTotalOfPoblation,int pVolumeOfPoblation)
 	{
 		this.atributte = pAttribute;
 		this.totalOfPoblation = pTotalOfPoblation;
@@ -20,7 +20,7 @@ public class AttributePercentage<T>
 	{
 		return GENOTYPE_LIMIT;
 	}
-	public T getAtributte() 
+	public Sector getAtributte() 
 	{
 		return atributte;
 	}
@@ -39,7 +39,7 @@ public class AttributePercentage<T>
 	{
 		this.volumeOfPoblation = pVolumeOfPoblation;
 	}
-	public void setAtributte(T pAtributte) 
+	public void setAtributte(Sector pAtributte) 
 	{
 		this.atributte = pAtributte;
 	}

@@ -12,7 +12,7 @@ public class ImageReader
 {
 	private static final int SECTOR_SIZE = 1024;
 	private static final int DIMENSION = 32;	
-	private final int GENOTYPE_LIMIT = (int)Math.pow(2,16);
+	private static final int GENOTYPE_LIMIT = (int)Math.pow(2,16);
 	public ImageReader() {};
 	public ArrayList<PixelInformation> getInflectionPoints(ArrayList<PixelInformation> pPoints) {
         PixelInformation max = new PixelInformation(new Point(0, Integer.MIN_VALUE), 0, Color.white);
@@ -97,11 +97,11 @@ public class ImageReader
         return polygons;
     }
     */
-    public Table<Sector> getImageTable(File pFile, double pSectorPixelsPercentage) throws IOException {
+    public Table getImageTable(File pFile, double pSectorPixelsPercentage) throws IOException {
 
         BufferedImage image = ImageIO.read(pFile);
-        Table<Sector> sectorGenotype = new Table<Sector>();
-        ArrayList<AttributePercentage<Sector>> sectors = new ArrayList<AttributePercentage<Sector>>();
+        Table sectorGenotype = new Table();
+        ArrayList<AttributePercentage> sectors = new ArrayList<AttributePercentage>();
         int currentSector = 0;
         for (int row = 0; row < DIMENSION; row++) {
             for (int column = 0; column < DIMENSION; column++) {
@@ -111,22 +111,31 @@ public class ImageReader
                 if(pixelsInformation.size()>0) {
                 	ArrayList<PixelInformation> inflectionPoints = getInflectionPoints(pixelsInformation);
                 	Sector sector = new Sector(initialPoint,finalPoint,currentSector,inflectionPoints);
-                	sectorGenotype.setTotalOfPoblation(sectorGenotype.getTotalOfPoblation()+inflectionPoints.size());
-                	sectors.add(new AttributePercentage<Sector>(sector,sectorGenotype.getTotalOfPoblation(),inflectionPoints.size()));   	
+                	sectorGenotype.setTotalOfPopulation(sectorGenotype.getTotalOfPopulation()+inflectionPoints.size());
+                	sectors.add(new AttributePercentage(sector,sectorGenotype.getTotalOfPopulation(),inflectionPoints.size()));   	
                 }
                 currentSector++;
             }
         }
         int initialRank = 0;
+        AttributePercentage[] sectorsGenotype = new AttributePercentage[GENOTYPE_LIMIT];
         for(currentSector = 0;currentSector<sectors.size();currentSector++) {
-        	AttributePercentage<Sector> sector = sectors.get(currentSector);
-        	sector.setTotalOfPoblation(sectorGenotype.getTotalOfPoblation());
+        	AttributePercentage sector = sectors.get(currentSector);
+        	sector.setTotalOfPoblation(sectorGenotype.getTotalOfPopulation());
         	sector.calculatePercentage();
         	sector.calculateGenotype(initialRank);
         	initialRank = sector.getGenotype()[1];
+        	for(int sectorInitialRank = sector.getGenotype()[0];sectorInitialRank<sector.getGenotype()[1];sectorInitialRank++) {
+        		sectorsGenotype[sectorInitialRank] = sector;
+        	}
         }
-        sectors.get(sectors.size()-1).setFinalRank(GENOTYPE_LIMIT);
-        sectorGenotype.setPoblation(sectors);
+        AttributePercentage sector = sectors.get(sectors.size()-1);
+        for(int sectorInitialRank = sector.getGenotype()[1];sectorInitialRank<GENOTYPE_LIMIT;sectorInitialRank++) {
+    		sectorsGenotype[sectorInitialRank] = sector;
+    	}
+        sector.setFinalRank(GENOTYPE_LIMIT);
+        sectorGenotype.setPopulation(sectors);
+        sectorGenotype.setPopulationArray(sectorsGenotype);
         return sectorGenotype;
     }
 }
