@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
@@ -12,6 +13,7 @@ public class ImageReader {
 
     private static final int SECTOR_SIZE = 1024;
     private static final int DIMENSION = 32;
+    private final int GENOTYPE_LIMIT = (int) Math.pow(2, 16);
 
     public ImageReader() {
     }
@@ -20,206 +22,128 @@ public class ImageReader {
 	public ArrayList<PixelInformation> getInflectionPoints(ArrayList<PixelInformation> pPoints) {
         PixelInformation max = new PixelInformation(new Point(0, Integer.MIN_VALUE), 0, Color.white);
         PixelInformation min = new PixelInformation(new Point(0, Integer.MAX_VALUE), 0, Color.white);
-        ArrayList<PixelInformation> maximos = new ArrayList<PixelInformation>();
-        ArrayList<PixelInformation> minimos = new ArrayList<PixelInformation>();
+        ArrayList<PixelInformation> maxs = new ArrayList<PixelInformation>();
+        ArrayList<PixelInformation> mins = new ArrayList<PixelInformation>();
         for (int i = 0; i < pPoints.size(); i++) {
-            PixelInformation puntoActual = pPoints.get(i);
-            if (puntoActual.getPoint().getY() >= max.getPoint().getY()) {
-                if (puntoActual.getPoint().getY() > max.getPoint().getY()) {
-                    max = puntoActual;
-                    maximos = new ArrayList<PixelInformation>();
+            PixelInformation currentPoint = pPoints.get(i);
+            if (currentPoint.getPoint().getY() >= max.getPoint().getY()) {
+                if (currentPoint.getPoint().getY() > max.getPoint().getY()) {
+                    max = currentPoint;
+                    maxs = new ArrayList<PixelInformation>();
                 }
-                maximos.add(puntoActual);
+                maxs.add(currentPoint);
             }
-            if (puntoActual.getPoint().getY() <= min.getPoint().getY()) {
-                if (puntoActual.getPoint().getY() < min.getPoint().getY()) {
-                    min = puntoActual;
-                    minimos = new ArrayList<PixelInformation>();
+            if (currentPoint.getPoint().getY() <= min.getPoint().getY()) {
+                if (currentPoint.getPoint().getY() < min.getPoint().getY()) {
+                    min = currentPoint;
+                    mins = new ArrayList<PixelInformation>();
                 }
-                minimos.add(puntoActual);
-            }
-        }
-        for (int i = 0; i < maximos.size(); i++) {
-            for (int j = 0; j < maximos.size() - 1; j++) {
-                PixelInformation actual = maximos.get(j);
-                PixelInformation siguiente = maximos.get(j + 1);
-                if (actual.getPoint().getX() > siguiente.getPoint().getX()) {
-                    maximos.set(j + 1, actual);
-                    maximos.set(j, siguiente);
-                }
+                mins.add(currentPoint);
             }
         }
-        for (int i = 0; i < minimos.size(); i++) {
-            for (int j = 0; j < minimos.size() - 1; j++) {
-                PixelInformation actual = minimos.get(j);
-                PixelInformation siguiente = minimos.get(j + 1);
-                if (actual.getPoint().getX() < siguiente.getPoint().getX()) {
-                    minimos.set(j + 1, actual);
-                    minimos.set(j, siguiente);
-                }
-            }
-        }
-        maximos.addAll(minimos);
-        return maximos;
+        maxs.addAll(mins);
+        return maxs;
     }
 
-    public ArrayList<PixelInformation> prueba(Point[] pCoordinates, double pPercentage, BufferedImage pImage, int pSector) {
+    public ArrayList<PixelInformation> getPixelsInformation(Point[] pCoordinates, double pPercentage, BufferedImage pImage, int pSector) {
         int arrayLen = pCoordinates.length;
-        int numberOfPixelsPerSector = (int) (pPercentage * SECTOR_SIZE);
-        boolean flag = false;
-        int eleccion = 0;
-        ArrayList<PixelInformation> puntos = new ArrayList<PixelInformation>();
-        for (int i = 0; i < numberOfPixelsPerSector && i < arrayLen; i++) {
-            if (flag) {
-                int signo = (Math.random() * 2) % 2 == 0 ? 1 : -1;
-                eleccion = eleccion + signo * (int) (Math.random() * 5);
-                if (eleccion > arrayLen || eleccion < 0) {
-                    eleccion = (int) (Math.random() * arrayLen);
+        final int NUMBER_OF_SCAN = 10;
+        double probability = 1;
+        final double REDUCTION = 1 - (1.0 / (arrayLen * pPercentage));
+        final int NUMBER_OF_PIXELS = (int) (arrayLen * (pPercentage / NUMBER_OF_SCAN));
+        ArrayList<PixelInformation> pixelsInformation = new ArrayList<PixelInformation>();
+        for (int scan = 0; scan < NUMBER_OF_SCAN; scan++) {
+            double random = Math.random();
+            if (random < probability) {
+                for (int pixel = 0; pixel < NUMBER_OF_PIXELS; pixel++) {
+                    int election = (int) (Math.random() * arrayLen);
+                    Color color = new Color(pImage.getRGB(pCoordinates[election].getX(), pCoordinates[election].getY()));
+                    if (color.equals(Color.white)) {
+                        probability *= REDUCTION;
+                    } else {
+                        pixelsInformation.add(new PixelInformation(pCoordinates[election], pSector, color));
+                    }
+                    arrayLen--;
+                    pCoordinates[election] = pCoordinates[arrayLen];
                 }
-            } else {
-                eleccion = (int) (Math.random() * arrayLen);
-            }
-            Point punto = pCoordinates[eleccion];
-            Color color = new Color(pImage.getRGB(punto.getX(), punto.getY()));
-            if (color.equals(Color.white)) {
-                pPercentage = pPercentage * 0.5;
-                numberOfPixelsPerSector = (int) (pPercentage * SECTOR_SIZE);
-                flag = false;
-            } else {
-                puntos.add(new PixelInformation(punto, pSector, color));
-                pPercentage += pPercentage * 0.2;
-                flag = true;
-            }
-            arrayLen--;
-            for (int j = eleccion; j < arrayLen; j++) {
-                pCoordinates[j] = pCoordinates[j + 1];
             }
         }
-        return puntos;
+        return pixelsInformation;
     }
 
-    public Point[] formarArray(Point pInitialPoint, Point pFinalPoint) throws InterruptedException {
-        Point nombre[] = new Point[SECTOR_SIZE];
-        for (int i = 0; i < DIMENSION; i++) {
-            for (int j = 0; j < DIMENSION; j++) {
-                nombre[i * DIMENSION + j] = new Point(pInitialPoint.getX() + i, pInitialPoint.getY() + j);
+    public Point[] createImageArray(Point pInitialPoint, Point pFinalPoint) {
+        Point imageArray[] = new Point[SECTOR_SIZE];
+        for (int row = 0; row < DIMENSION; row++) {
+            for (int column = 0; column < DIMENSION; column++) {
+                imageArray[row * DIMENSION + column] = new Point(pInitialPoint.getX() + row, pInitialPoint.getY() + column);
             }
         }
-        return nombre;
+        return imageArray;
     }
 
-    public ArrayList<ArrayList<PixelInformation>> getImagePixelsInformation(File pFile, double pSectorPixelsPercentage) throws IOException, InterruptedException {
+    /*
+    public ArrayList<Polygon> getImagePolygons(File pFile, double pSectorPixelsPercentage) throws IOException {
 
         BufferedImage image = ImageIO.read(pFile);
-        int numberOfPixelsPerSector = (int) (pSectorPixelsPercentage * SECTOR_SIZE);
-        ArrayList<ArrayList<PixelInformation>> puntosInfleccion = new ArrayList<ArrayList<PixelInformation>>();
+        ArrayList<Polygon> polygons = new ArrayList<Polygon>();
         int currentSector = 0;
         for (int row = 0; row < DIMENSION; row++) {
             for (int column = 0; column < DIMENSION; column++) {
                 Point initialPoint = new Point(DIMENSION * row, DIMENSION * column);
                 Point finalPoint = new Point((DIMENSION * (row + 1)) - 1, (DIMENSION * (column + 1)) - 1);
-                ArrayList<PixelInformation> cosa = getInflectionPoints(prueba(formarArray(initialPoint, finalPoint), pSectorPixelsPercentage, image, currentSector));
-                puntosInfleccion.add(cosa);
-                currentSector++;
-            }
-        }
-        return puntosInfleccion;
-    }
-
-    /*
-    public PixelInformation[] getImagePixelsInformation(File pFile, double pSectorPixelsPercentage) throws IOException {
-        FramePrueba frame = new FramePrueba();
-        frame.setVisible(true);
-        frame.setPreferredSize(new Dimension(1100, 1100));
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        JPanel panel = new JPanel();
-        panel.setSize(1024, 1024);
-        frame.add(panel);
-        Graphics g = panel.getGraphics();
-        BufferedImage image = ImageIO.read(pFile);
-        int numberOfPixelsPerSector = (int) (pSectorPixelsPercentage * SECTOR_SIZE);
-        PixelInformation[] pixelsInformation = new PixelInformation[numberOfPixelsPerSector * SECTOR_SIZE];
-        int currentSector = 0;
-        int pixelIndex = 0;
-        for (int row = 0; row < DIMENSION; row++) {
-            for (int column = 0; column < DIMENSION; column++) {
-                for (int currentPixel = 0; currentPixel < numberOfPixelsPerSector; currentPixel++) {
-                    int x = (int) (Math.random() * (DIMENSION * row)) + 1;
-                    int y = (int) (Math.random() * (DIMENSION * column)) + 1;
-                    Color color = new Color(image.getRGB(x, y));
-                    pixelsInformation[pixelIndex] = new PixelInformation(x, y, currentSector, color);
-                    PixelInformation punto = pixelsInformation[pixelIndex];
-                    g.setColor(color);
-                    g.fillOval(x, y, 2, 2);
-                    pixelIndex++;
+                ArrayList<PixelInformation> pixelsInformation = getPixelsInformation(createImageArray(initialPoint, finalPoint), pSectorPixelsPercentage, image, currentSector);
+                if(pixelsInformation.size()>0) {
+                	ArrayList<PixelInformation> inflectionPoints = getInflectionPoints(pixelsInformation);
+                	polygons.add(new Polygon(currentSector,inflectionPoints));
                 }
                 currentSector++;
             }
         }
-        return pixelsInformation;
+        return polygons;
     }
      */
-    public Color getAVG(ArrayList<PixelInformation> pointPerSector) {
-        //recorrer cada elemento del Array hasta cambiar de sector
-        int totalRED = 0;
-        int totalGREEN = 0;
-        int totalBLUE = 0;
-        for (int element = 0; element < pointPerSector.size(); element++) {
-            //System.out.println(pointPerSector.get(element).getColor());
-            int red = pointPerSector.get(element).getColor().getRed();
-            totalRED += red;
-            int green = pointPerSector.get(element).getColor().getGreen();
-            totalGREEN += green;
-            int blue = pointPerSector.get(element).getColor().getBlue();
-            totalBLUE += blue;
-        }
-        int avgRed = totalRED / pointPerSector.size();
-        int avgGreen = totalGREEN / pointPerSector.size();
-        int avgBlue = totalBLUE / pointPerSector.size();
-        Color sector = new Color(avgRed, avgGreen, avgBlue);
-        return sector;
-    }
+    public Table<Sector> getImageTable(File pFile, double pSectorPixelsPercentage) throws IOException {
 
-    /*
-	public SectorInformation[][] getImageSectorInformation(File pFile, double pSectorPixelsPercentage) throws IOException
-	{
-		SectorInformation[][] imageSectorInformation = new SectorInformation[32][32];
-		PixelInformation[] pixelsInformation = getImagePixelsInformation(pFile, pSectorPixelsPercentage);
-		int currentSector = 0;
-		int numberOfPixelsPerSector = (int) (pSectorPixelsPercentage * SECTOR_SIZE);
-		for(int row = 0;row<DIMENSION;row++) {
-			for(int column = 0;column<DIMENSION;column++) {
-				int startOfSameSectorPixels = currentSector*numberOfPixelsPerSector;
-				int endOfSameSectorPixels = (currentSector+1)*numberOfPixelsPerSector;
-				Point initialPoint = new Point(DIMENSION * row,DIMENSION * column);
-				Point finalPoint = new Point((DIMENSION * (row+1))-1,(DIMENSION * (column+1))-1);
-				imageSectorInformation[row][column] = new SectorInformation(currentSector,pixelsInformation,startOfSameSectorPixels,endOfSameSectorPixels,initialPoint,finalPoint);
-				currentSector++;
-			}
-		}
-		return imageSectorInformation;
-	}
-     */
-    public int getArea(ArrayList<Point> polygon) {
-        Point firstItem = polygon.get(0);
-        polygon.add(firstItem);
-        float constant = (float) (1.0 / 2.0);
-        int positiveAnswer = 0;
-        int negativeAnswer = 0;
-        int changeSign = -1;
-        for (int firstDiagonal = 0; firstDiagonal < polygon.size() - 1; firstDiagonal++) {
-            Point xDiagonal = polygon.get(firstDiagonal);
-            Point yDiagonal = polygon.get(firstDiagonal + 1);
-            positiveAnswer += xDiagonal.getX() * yDiagonal.getY();
+        BufferedImage image = ImageIO.read(pFile);
+        Table<Sector> sectorGenotype = new Table<Sector>();
+        ArrayList<AttributePercentage<Sector>> sectors = new ArrayList<AttributePercentage<Sector>>();
+        int currentSector = 0;
+        for (int row = 0; row < DIMENSION; row++) {
+            for (int column = 0; column < DIMENSION; column++) {
+                Point initialPoint = new Point(DIMENSION * row, DIMENSION * column);
+                Point finalPoint = new Point((DIMENSION * (row + 1)) - 1, (DIMENSION * (column + 1)) - 1);
+                //pixelsInformation contiene los pixeles de un sector
+                ArrayList<PixelInformation> pixelsInformation = getPixelsInformation(createImageArray(initialPoint, finalPoint), pSectorPixelsPercentage, image, currentSector);
+                //valida que el no sea un sector en blanco
+                if (pixelsInformation.size() > 0) {
+                    //Agarra los maximos y los minimos de cada sector
+                    ArrayList<PixelInformation> inflectionPoints = getInflectionPoints(pixelsInformation);
+                    Sector sector = new Sector(initialPoint, finalPoint, currentSector, inflectionPoints);
+                    sectorGenotype.setTotalOfPoblation(sectorGenotype.getTotalOfPoblation() + inflectionPoints.size());
+                    //Agrega el porcentaje que tiene cada elemento de la tabla
+                    sectors.add(new AttributePercentage<Sector>(sector, sectorGenotype.getTotalOfPoblation(), inflectionPoints.size()));
+                }
+                currentSector++;
+            }
         }
-        for (int seconfDiagonal = 0; seconfDiagonal < polygon.size() - 1; seconfDiagonal++) {
-            Point yDiagonal = polygon.get(seconfDiagonal);
-            Point xDiagonal = polygon.get(seconfDiagonal + 1);
-            negativeAnswer += yDiagonal.getY() * xDiagonal.getX();
+        int initialRank = 0;
+        //En esta Parte esta la creacion del HashMap
+        HashMap<Integer, Double> hash = new HashMap<>();
+        for (currentSector = 0; currentSector < sectors.size(); currentSector++) {
+            AttributePercentage<Sector> sector = sectors.get(currentSector);
+            sector.setTotalOfPoblation(sectorGenotype.getTotalOfPoblation());
+            sector.calculatePercentage();
+            sector.calculateGenotype(initialRank);
+            int tope = sector.getGenotype()[1];
+            for (int i = initialRank; i<=tope;i++){
+                hash.put(i, sector.getPercentage());
+                System.out.println("Genotipo: " + i + " , " + "Fenotipo: " + sector.getPercentage());
+            }
+            initialRank = sector.getGenotype()[1];
+            
         }
-        negativeAnswer = negativeAnswer * changeSign;
-        int Area = Math.abs((int) ((positiveAnswer + negativeAnswer) * constant));
-        return Area;
+        sectors.get(sectors.size() - 1).setFinalRank(GENOTYPE_LIMIT);
+        sectorGenotype.setPoblation(sectors);
+        return sectorGenotype;
     }
 }
