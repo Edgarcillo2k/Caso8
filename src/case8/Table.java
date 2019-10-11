@@ -2,29 +2,38 @@ package case8;
 
 import java.util.ArrayList;
 
-public class Table<T>
+public class Table
 {
 	private int totalOfPopulation;
-	ArrayList<AttributePercentage<T>> population;
+	ArrayList<AttributePercentage> population;
+	AttributePercentage[] populationArray;
 	public Table() 
 	{
 		this.totalOfPopulation = 0;
-		this.population = new ArrayList<AttributePercentage<T>>();
+		this.population = new ArrayList<AttributePercentage>();
 	}
-	public int getTotalOfPoblation() 
+	public int getTotalOfPopulation() 
 	{
 		return totalOfPopulation;
 	}
-	public void setTotalOfPoblation(int pTotalOfPopulation) 
+	public void setTotalOfPopulation(int pTotalOfPopulation) 
 	{
 		this.totalOfPopulation = pTotalOfPopulation;
 	}
-	public ArrayList<AttributePercentage<T>> getPoblation() 
+	public ArrayList<AttributePercentage> getPopulation() 
 	{
 		return population;
 	}
-	public void setPoblation(ArrayList<AttributePercentage<T>> pPopulation) 
+	public void setPopulation(ArrayList<AttributePercentage> pPopulation) 
 	{
 		this.population = pPopulation;
+	}
+	public AttributePercentage[] getPopulationArray() 
+	{
+		return populationArray;
+	}
+	public void setPopulationArray(AttributePercentage[] pPopulation) 
+	{
+		this.populationArray = pPopulation;
 	}
 }

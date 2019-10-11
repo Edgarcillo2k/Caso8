@@ -16,10 +16,10 @@ public class HtmlWriter
 			File f = new File(pHtmlPath);
 	        BufferedWriter htmlFile = new BufferedWriter(new FileWriter(f));
 	        ImageReader imageReader = new ImageReader();
-	        Table<Sector> table = imageReader.getImageTable(new File(pImagePath), pPercentageOfPixels);
+	        Table table = imageReader.getImageTable(new File(pImagePath), pPercentageOfPixels);
 	        GeneticAlgorithm genetic = new GeneticAlgorithm(table);
-	        genetic.createPopulation(500);
-	        genetic.run(9);
+	        genetic.createPopulation(60);
+	        genetic.run(100);
 	        
 	        /*
 	         for (int i = 0; i < maxs.size(); i++) {
