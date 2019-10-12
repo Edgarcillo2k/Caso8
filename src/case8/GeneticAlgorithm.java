@@ -51,6 +51,26 @@ public class GeneticAlgorithm
 	public void setTable(Table pTable) 
 	{
 		this.table = pTable;
+		HashMap<Integer,ArrayList<Individual<PixelInformation>>> populationAux = new HashMap<Integer,ArrayList<Individual<PixelInformation>>>();
+		this.populationQuantityOfTable = new HashMap<Integer,Integer>(pTable.getPopulation().size());
+		this.populationPercentageOfTable = new HashMap<Integer,Double>(pTable.getPopulation().size());
+		for(int sector = 0;sector<pTable.getPopulation().size();sector++) {
+			populationQuantityOfTable.put(pTable.getPopulation().get(sector).getAtributte().getSector(),0);
+			populationPercentageOfTable.put(pTable.getPopulation().get(sector).getAtributte().getSector(),0.0);
+			populationAux.put(pTable.getPopulation().get(sector).getAtributte().getSector(),new ArrayList<Individual<PixelInformation>>());
+		}
+		for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : population.entrySet()) {
+			ArrayList<Individual<PixelInformation>> value = entry.getValue();
+			for(int i = 0;i<value.size();i++) {
+				Individual<PixelInformation> currentIndividual = value.get(i);
+				Sector currentSector = pTable.getPopulationArray()[currentIndividual.getGenotype()].getAtributte();
+				ArrayList<Individual<PixelInformation>> populationFromSector = populationAux.get(currentSector.getSector());
+				populationFromSector.add(new Individual<PixelInformation>(new PixelInformation(currentIndividual.getObject().getPoint(),currentSector.getSector(),currentSector.getColor()),currentIndividual.getGenotype()));
+				populationQuantityOfTable.put(currentSector.getSector(),populationQuantityOfTable.get(currentSector.getSector())+1);
+			}
+			this.population = populationAux;
+		}
+		calculatePercentages();
 	}
 	public void createPopulation(int pNumberOfIndividuals) 
 	{
@@ -87,10 +107,10 @@ public class GeneticAlgorithm
 			    	Individual<PixelInformation> currentIndividual = value.get(0);
 					double percentageOfSimilarity = percentageOfEquality(currentIndividual.getObject().getColor(),currentSector.getAtributte().getColor());
 					double percentageOfSimilarityOfQuantity = table.getPopulationArray()[currentSector.getGenotype()[0]].getPercentage()-populationPercentageOfTable.get(currentSector.getAtributte().getSector());
-					if((percentageOfSimilarity >= 70 && percentageOfSimilarityOfQuantity > 0 )|| (percentageOfSimilarity <= 5 && percentageOfSimilarityOfQuantity < 0)) {
+					if((percentageOfSimilarity >= 50 && percentageOfSimilarityOfQuantity > 0 )|| (percentageOfSimilarity <= 50 && percentageOfSimilarityOfQuantity < 0)) {
 						ArrayList<Individual<PixelInformation>> currentFitSector = fits.get(currentSector.getAtributte().getSector());
 						currentFitSector.add(currentIndividual);
-						fitsTotal++;						
+						fitsTotal++;			
 					}
 				}
 			}
@@ -149,6 +169,49 @@ public class GeneticAlgorithm
 		pGenotype = pGenotype.substring(0, random) + pGenotype.charAt(random) == "1"?"0":"1" + pGenotype.substring(random + 1); 
 		return pGenotype;
 	}
+	public void run(int pGenerations)
+	{
+		for(int currentGeneration = 1;currentGeneration<pGenerations;currentGeneration++) {
+			HashMap<Integer,ArrayList<Individual<PixelInformation>>> fits = fitnessFunction();
+			//System.out.println("Gen:"+currentGeneration + ",Fits:" + fitsTotal + ",Population:" + totalPopulation+",Sectors:"+table.getPopulation().size());			
+			for (Map.Entry<Integer,ArrayList<Individual<PixelInformation>>> entry : fits.entrySet()) {	
+				ArrayList<Individual<PixelInformation>> currentFitSector = entry.getValue();
+				while(currentFitSector.size()>1) {
+					int random1 = (int)Math.random()*fits.size();
+					Individual<PixelInformation> individual1 = currentFitSector.get(random1);
+					currentFitSector.remove(random1);
+					int random2 = (int)Math.random()*fits.size();
+					Individual<PixelInformation> individual2 = currentFitSector.get(random2);
+					currentFitSector.remove(random2);
+					for(int children = 0;children<2;children++) {
+						cross(individual1,individual2);
+					}
+				}
+			}
+			calculatePercentages();
+			if(stop()) {
+				return;
+			}
+		}
+	}
+	public boolean stop()
+	{
+		ArrayList<AttributePercentage> sectors = table.getPopulation();
+		double distanceFromSolution = 0;
+		for(int sector = 0;sector<sectors.size();sector++){
+			AttributePercentage currentSector = sectors.get(sector);
+			double diff = populationPercentageOfTable.get(currentSector.getAtributte().getSector())-currentSector.getPercentage();
+			double currentPercentage = Math.abs(diff);
+			distanceFromSolution += currentPercentage;
+		};
+		System.out.println(distanceFromSolution);
+		distanceFromSolution = distanceFromSolution/2;
+		if(distanceFromSolution <= 0.135){
+			return true;
+		}
+		return false;
+	}
+	
 	public double[] rgbToLab(int R, int G, int B) {
 
 	    double r, g, b, X, Y, Z, xr, yr, zr;
@@ -224,47 +287,5 @@ public class GeneticAlgorithm
 		double[] color1 = rgbToLab(pColor1.getRed(),pColor1.getGreen(),pColor1.getBlue());
 		double[] color2 = rgbToLab(pColor2.getRed(),pColor2.getGreen(),pColor2.getBlue());
 		return 100 - Math.sqrt(Math.pow((color1[0] - color2[0]),2) + Math.pow((color1[1] - color2[1]),2) + Math.pow((color1[2] - color2[2]),2));
-	}
-	public void run(int pGenerations)
-	{
-		for(int currentGeneration = 1;currentGeneration<pGenerations;currentGeneration++) {
-			HashMap<Integer,ArrayList<Individual<PixelInformation>>> fits = fitnessFunction();
-			//System.out.println("Gen:"+currentGeneration + ",Fits:" + fitsTotal + ",Population:" + totalPopulation+",Sectors:"+table.getPopulation().size());
-			for (Map.Entry<Integer,ArrayList<Individual<PixelInformation>>> entry : fits.entrySet()) {	
-				ArrayList<Individual<PixelInformation>> currentFitSector = entry.getValue();
-				while(currentFitSector.size()>1) {
-					int random1 = (int)Math.random()*fits.size();
-					Individual<PixelInformation> individual1 = currentFitSector.get(random1);
-					currentFitSector.remove(random1);
-					int random2 = (int)Math.random()*fits.size();
-					Individual<PixelInformation> individual2 = currentFitSector.get(random2);
-					currentFitSector.remove(random2);
-					for(int children = 0;children<2;children++) {
-						cross(individual1,individual2);
-					}
-				}
-			}
-			calculatePercentages();
-			if(stop()) {
-				return;
-			}
-		}
-	}
-	public boolean stop()
-	{
-		ArrayList<AttributePercentage> sectors = table.getPopulation();
-		double distanceFromSolution = 0;
-		for(int sector = 0;sector<sectors.size();sector++){
-			AttributePercentage currentSector = sectors.get(sector);
-			double diff = populationPercentageOfTable.get(currentSector.getAtributte().getSector())-currentSector.getPercentage();
-			double currentPercentage = Math.abs(diff);
-			distanceFromSolution += currentPercentage;
-		};
-		System.out.println(distanceFromSolution);
-		distanceFromSolution = distanceFromSolution/2;
-		if(distanceFromSolution <= 0.05){
-			return true;
-		}
-		return false;
 	}
 }

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class HtmlWriter 
 {
 	public HtmlWriter () {}
-	public void drawPolygons(String pHtmlPath, String pImagePath,double pPercentageOfPixels)
+	public void drawPolygons(String pHtmlPath, String pImagePath,String pImage2Path,String pImage3Path,double pPercentageOfPixels)
 	{
 		try {
 			File f = new File(pHtmlPath);
@@ -19,8 +19,15 @@ public class HtmlWriter
 	        Table table = imageReader.getImageTable(new File(pImagePath), pPercentageOfPixels);
 	        GeneticAlgorithm genetic = new GeneticAlgorithm(table);
 	        genetic.createPopulation(60);
-	        genetic.run(500);
-	        
+	        genetic.run(10);
+	        table = imageReader.getImageTable(new File(pImage2Path), pPercentageOfPixels);
+	        genetic.setTable(table);
+	        genetic.panel.repaint();
+	        genetic.run(10);
+	        table = imageReader.getImageTable(new File(pImage3Path), pPercentageOfPixels);
+	        genetic.setTable(table);
+	        genetic.panel.repaint();
+	        genetic.run(10);
 	        /*
 	         for (int i = 0; i < maxs.size(); i++) {
             for (int j = 0; j < maxs.size() - 1; j++) {
