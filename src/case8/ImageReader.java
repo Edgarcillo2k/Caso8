@@ -109,10 +109,9 @@ public class ImageReader
                 Point finalPoint = new Point((DIMENSION * (row + 1)) - 1, (DIMENSION * (column + 1)) - 1);
                 ArrayList<PixelInformation> pixelsInformation = getPixelsInformation(createImageArray(initialPoint, finalPoint), pSectorPixelsPercentage, image, currentSector);
                 if(pixelsInformation.size()>0) {
-                	ArrayList<PixelInformation> inflectionPoints = getInflectionPoints(pixelsInformation);
-                	Sector sector = new Sector(initialPoint,finalPoint,currentSector,inflectionPoints);
-                	sectorGenotype.setTotalOfPopulation(sectorGenotype.getTotalOfPopulation()+inflectionPoints.size());
-                	sectors.add(new AttributePercentage(sector,sectorGenotype.getTotalOfPopulation(),inflectionPoints.size()));   	
+                	Sector sector = new Sector(initialPoint,finalPoint,currentSector,pixelsInformation);
+                	sectorGenotype.setTotalOfPopulation(sectorGenotype.getTotalOfPopulation()+pixelsInformation.size());
+                	sectors.add(new AttributePercentage(sector,sectorGenotype.getTotalOfPopulation(),pixelsInformation.size()));   	
                 }
                 currentSector++;
             }
