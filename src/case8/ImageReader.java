@@ -76,27 +76,6 @@ public class ImageReader
         }
         return imageArray;
     }
-/*
-    public ArrayList<Polygon> getImagePolygons(File pFile, double pSectorPixelsPercentage) throws IOException {
-
-        BufferedImage image = ImageIO.read(pFile);
-        ArrayList<Polygon> polygons = new ArrayList<Polygon>();
-        int currentSector = 0;
-        for (int row = 0; row < DIMENSION; row++) {
-            for (int column = 0; column < DIMENSION; column++) {
-                Point initialPoint = new Point(DIMENSION * row, DIMENSION * column);
-                Point finalPoint = new Point((DIMENSION * (row + 1)) - 1, (DIMENSION * (column + 1)) - 1);
-                ArrayList<PixelInformation> pixelsInformation = getPixelsInformation(createImageArray(initialPoint, finalPoint), pSectorPixelsPercentage, image, currentSector);
-                if(pixelsInformation.size()>0) {
-                	ArrayList<PixelInformation> inflectionPoints = getInflectionPoints(pixelsInformation);
-                	polygons.add(new Polygon(currentSector,inflectionPoints));
-                }
-                currentSector++;
-            }
-        }
-        return polygons;
-    }
-    */
     public Table getImageTable(File pFile, double pSectorPixelsPercentage) throws IOException {
 
         BufferedImage image = ImageIO.read(pFile);
