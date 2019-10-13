@@ -6,68 +6,70 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HtmlWriter {
 
     public HtmlWriter() {
     }
 
-    public void drawPolygons(String pHtmlPath, String pImagePath, double pPercentageOfPixels) {
+    public void drawPolygons(String pHtmlPath, String pImagePath, String pImage2Path, String pImage3Path, double pPercentageOfPixels) {
         try {
             File f = new File(pHtmlPath);
             BufferedWriter htmlFile = new BufferedWriter(new FileWriter(f));
             ImageReader imageReader = new ImageReader();
-            Table<Sector> table = imageReader.getImageTable(new File(pImagePath), pPercentageOfPixels);
+            Table table = imageReader.getImageTable(new File(pImagePath), pPercentageOfPixels);
             GeneticAlgorithm genetic = new GeneticAlgorithm(table);
-            genetic.createPopulation(500);
-            genetic.run(9);
+            genetic.createPopulation(60);
+            genetic.run(10);
+            HashMap<Integer, ArrayList<Individual<PixelInformation>>> prueba = genetic.population;
 
-            /*
-	         for (int i = 0; i < maxs.size(); i++) {
-            for (int j = 0; j < maxs.size() - 1; j++) {
-                PixelInformation current = maxs.get(j);
-                PixelInformation next = maxs.get(j + 1);
-                if (current.getPoint().getX() > next.getPoint().getX()) {
-                    maxs.set(j + 1, current);
-                    maxs.set(j, next);
+            String html = "<!DOCTYPE html>\n"
+                    + "<html>\n"
+                    + "<body>\n"
+                    + "\n"
+                    + "<svg height=\"2100\" width=\"2100\">"
+                    +"<polygon points='";
+
+            for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : prueba.entrySet()) {
+                ArrayList<Individual<PixelInformation>> value = entry.getValue();
+                int cont = 0;
+                int cont2 = 0;
+                for (int pixel = 0; pixel < value.size(); pixel++) {
+                    if (cont2 < 70) {
+                        PixelInformation actual = value.get(pixel).getObject();
+                        if (cont < 3) {
+                            html += actual.getPoint().getX() + "," + actual.getPoint().getY() + " ";
+                            cont++;
+                        } else {
+                            Color color = actual.getColor();
+                            html += "'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")\" />\n";
+                            html += "<polygon points='";
+                            cont = 0;
+                            cont2++;
+                        }
+                    }
                 }
             }
-        }
-        for (int i = 0; i < mins.size(); i++) {
-            for (int j = 0; j < mins.size() - 1; j++) {
-                PixelInformation current = mins.get(j);
-                PixelInformation next = mins.get(j + 1);
-                if (current.getPoint().getX() < next.getPoint().getX()) {
-                    mins.set(j + 1, current);
-                    mins.set(j, next);
-                }
-            }
-        }
-             */
- /*
-	        ArrayList<Polygon> polygons = imageReader.getImagePolygons(new File(pImagePath), pPercentageOfPixels);
-	        String html = "<!DOCTYPE html>\n"
-	                + "<html>\n"
-	                + "<body>\n"
-	                + "\n"
-	                + "<svg height=\"2100\" width=\"2100\">";
-	        for (int currentPolygon = 0; currentPolygon < polygons.size(); currentPolygon++) {
-	            Polygon polygon = polygons.get(currentPolygon);
-	            ArrayList<PixelInformation> polygonPoints = polygon.getPoints();
-	            Color color = polygon.getColor();
-	            html+= "<polygon points='";
-	            for (int currentPixel = 0; currentPixel < polygonPoints.size(); currentPixel++) {
-	                Point pixel = polygonPoints.get(currentPixel).getPoint();
-	                html +=pixel.getX() + "," + pixel.getY() + " ";
-	            }
-	            html += "'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() +")\" />\n";
-	        }
-		    html += "</svg>\n\n</body>\n</html>";
-		    htmlFile.write(html);
-		    htmlFile.close();
-             */
+            html+="/>";
+            html += "</svg>\n\n</body>\n</html>";
+            htmlFile.write(html);
+            htmlFile.close();
+            System.out.println(html);
+            System.out.println("SALI");
+
+//            table = imageReader.getImageTable(new File(pImage2Path), pPercentageOfPixels);
+//            genetic.setTable(table);
+//            genetic.panel.repaint();
+//            genetic.run(10);
+//            table = imageReader.getImageTable(new File(pImage3Path), pPercentageOfPixels);
+//            genetic.setTable(table);
+//            genetic.panel.repaint();
+//            genetic.run(10);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }
