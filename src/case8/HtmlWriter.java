@@ -46,7 +46,7 @@ public class HtmlWriter
 
             System.out.println("Goku");
             int svg = 0;
-            builderHtml.append("<!DOCTYPE html>\n<html>\n<body> <a href='#' id = 'nextGen' >Next Gen</a> \n<div id = 'svg" + svg + "' style = 'display:none;'>");
+            builderHtml.append("<!DOCTYPE html>\n<html>\n<body> <a href='#' id = 'nextGen' >Next Gen</a> \n<div id = 'svg" + svg + "' style = 'display:visible;'>");
 
             for (int iteration = 0; iteration < 4; iteration++) {
                 genetic.run(2);
@@ -57,7 +57,7 @@ public class HtmlWriter
                     int points = 0;
                     int polygons = 0;
                     for (int pixel = 0; pixel < value.size(); pixel++) {
-                        if (polygons < 10) {
+                        if (polygons < 3) {
                             PixelInformation actual = value.get(pixel).getObject();
                             if (points < 3) {
                                 builderHtml.append(actual.getPoint().getX() + "," + actual.getPoint().getY() + " ");
@@ -75,7 +75,7 @@ public class HtmlWriter
                     }
                 }
                 svg++;
-                builderHtml.append("/></svg></div><div id = 'svg" + svg + "' style = 'display:none;>");
+                builderHtml.append("'style=\"fill:white\"/></svg></div>\n\n<div id = 'svg" + svg + "' style = 'display:none;'>");
             }
 
             System.out.println("Vegetta");
@@ -91,7 +91,7 @@ public class HtmlWriter
                     int cont = 0;
                     int cont2 = 0;
                     for (int pixel = 0; pixel < value.size(); pixel++) {
-                        if (cont2 < 10) {
+                        if (cont2 < 3) {
                             PixelInformation actual = value.get(pixel).getObject();
                             if (cont < 3) {
                                 builderHtml.append(actual.getPoint().getX() + "," + actual.getPoint().getY() + " ");
@@ -109,7 +109,7 @@ public class HtmlWriter
                     }
                 }
                 svg++;
-                builderHtml.append("/></svg></div><div id = 'svg" + svg + "' style = 'display:none;>");
+                builderHtml.append("'style=\"fill:white\"/></svg></div>\n\n<div id = 'svg" + svg + "' style = 'display:none;'>");
             }
 
             System.out.println("Meliodas");
@@ -125,7 +125,7 @@ public class HtmlWriter
                     int cont = 0;
                     int cont2 = 0;
                     for (int pixel = 0; pixel < value.size(); pixel++) {
-                        if (cont2 < 10) {
+                        if (cont2 < 3) {
                             PixelInformation actual = value.get(pixel).getObject();
                             if (cont < 3) {
                                 builderHtml.append(actual.getPoint().getX() + "," + actual.getPoint().getY() + " ");
@@ -143,22 +143,22 @@ public class HtmlWriter
                     }
                 }
                 svg++;
-                builderHtml.append("/></svg></div><div id = 'svg" + svg + "' style = 'display:none;>");
+                builderHtml.append("'style=\"fill:white\"/></svg></div>\n\n<div id = 'svg" + svg + "' style = 'display:none;'>");
 
             }
 
-            builderHtml.append("\n\n</div>");
+            builderHtml.append("\n\n</div></body>");
             builderHtml.append("<script\n"
                     + "  src=\"https://code.jquery.com/jquery-3.4.1.min.js\"\n"
                     + "  integrity=\"sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=\"\n"
                     + "  crossorigin=\"anonymous\"></script>");
             builderHtml.append("<script src = js/jQuery.js></script>");
-            builderHtml.append("</body>\n</html>");
+            builderHtml.append("\n</html>");
             String html = builderHtml.toString();
             htmlFile.write(html);
             htmlFile.close();
-            System.out.println(html);
-            System.out.println(svg);
+//            System.out.println(html);
+//            System.out.println(svg);
 
         } catch (IOException e) {
             e.printStackTrace();
