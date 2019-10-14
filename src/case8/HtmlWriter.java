@@ -36,18 +36,17 @@ public class HtmlWriter
 
     public void drawPolygons(String pHtmlPath, String pImagePath, String pImage2Path, String pImage3Path, double pPercentageOfPixels) {
         try {
-//            File f = new File(pHtmlPath);
-//            BufferedWriter htmlFile = new BufferedWriter(new FileWriter(f));C:\Users\mario\OneDrive\Desktop\Caso8Netbeans\src\case8
             ImageReader imageReader = new ImageReader();
             Table table = imageReader.getImageTable(new File(pImagePath), pPercentageOfPixels);
             GeneticAlgorithm genetic = new GeneticAlgorithm(table);
             genetic.createPopulation(60);
 
+            System.out.println("Goku");
             for (int iteration = 0; iteration < 4; iteration++) {
                 genetic.run(2);
                 File f = new File("C:\\Users\\mario\\OneDrive\\Desktop\\Caso8Netbeans\\src\\case8\\htmlgoku" + iteration + ".html");
                 BufferedWriter htmlFile = new BufferedWriter(new FileWriter(f));
-                HashMap<Integer, ArrayList<Individual<PixelInformation>>> prueba = genetic.population;
+                HashMap<Integer, ArrayList<Individual<PixelInformation>>> prueba = genetic.getPopulation();
                 String html = "<!DOCTYPE html>\n"
                         + "<html>\n"
                         + "<body>\n"
@@ -71,6 +70,9 @@ public class HtmlWriter
                                 cont = 0;
                                 cont2++;
                             }
+                        } else {
+                            break;
+
                         }
                     }
                 }
@@ -80,21 +82,21 @@ public class HtmlWriter
                 htmlFile.close();
             }
 
+            System.out.println("Vegetta");
             table = imageReader.getImageTable(new File(pImage2Path), pPercentageOfPixels);
-            HashMap<Integer, ArrayList<Individual<PixelInformation>>> prueba = new HashMap<>();
             genetic.setTable(table);
-            for (int iteration = 0; iteration < 10; iteration++) {
+            for (int iteration = 0; iteration < 4; iteration++) {
                 genetic.run(2);
                 File f = new File("C:\\Users\\mario\\OneDrive\\Desktop\\Caso8Netbeans\\src\\case8\\htmlvegetta" + iteration + ".html");
                 BufferedWriter htmlFile = new BufferedWriter(new FileWriter(f));
-                prueba = genetic.population;
+                HashMap<Integer, ArrayList<Individual<PixelInformation>>> prueba2 = genetic.getPopulation();
                 String html = "<!DOCTYPE html>\n"
                         + "<html>\n"
                         + "<body>\n"
                         + "\n"
                         + "<svg height=\"2100\" width=\"2100\">"
                         + "<polygon points='";
-                for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : prueba.entrySet()) {
+                for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : prueba2.entrySet()) {
                     ArrayList<Individual<PixelInformation>> value = entry.getValue();
                     int cont = 0;
                     int cont2 = 0;
@@ -111,6 +113,8 @@ public class HtmlWriter
                                 cont = 0;
                                 cont2++;
                             }
+                        } else {
+                            break;
                         }
                     }
                 }
@@ -119,21 +123,22 @@ public class HtmlWriter
                 htmlFile.write(html);
                 htmlFile.close();
             }
+
+            System.out.println("Meliodas");
             table = imageReader.getImageTable(new File(pImage3Path), pPercentageOfPixels);
-            prueba = new HashMap<>();
             genetic.setTable(table);
-            for (int iteration = 0; iteration < 10; iteration++) {
+            for (int iteration = 0; iteration < 4; iteration++) {
                 genetic.run(2);
                 File f = new File("C:\\Users\\mario\\OneDrive\\Desktop\\Caso8Netbeans\\src\\case8\\htmlmeliodas" + iteration + ".html");
                 BufferedWriter htmlFile = new BufferedWriter(new FileWriter(f));
-                prueba = genetic.population;
+                HashMap<Integer, ArrayList<Individual<PixelInformation>>> prueba3 = genetic.getPopulation();
                 String html = "<!DOCTYPE html>\n"
                         + "<html>\n"
                         + "<body>\n"
                         + "\n"
                         + "<svg height=\"2100\" width=\"2100\">"
                         + "<polygon points='";
-                for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : prueba.entrySet()) {
+                for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : prueba3.entrySet()) {
                     ArrayList<Individual<PixelInformation>> value = entry.getValue();
                     int cont = 0;
                     int cont2 = 0;
@@ -150,6 +155,8 @@ public class HtmlWriter
                                 cont = 0;
                                 cont2++;
                             }
+                        } else {
+                            break;
                         }
                     }
                 }

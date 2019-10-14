@@ -12,7 +12,7 @@ public class GeneticAlgorithm {
     private Table table;
     private HashMap<Integer, Integer> populationQuantityOfTable;
     private HashMap<Integer, Double> populationPercentageOfTable;
-    public HashMap<Integer, ArrayList<Individual<PixelInformation>>> population;
+    private HashMap<Integer, ArrayList<Individual<PixelInformation>>> population;
     private final int GENOTYPE_LIMIT = (int) Math.pow(2, 16);
     public JFrame pruebaFrame;
     public JPanel panel;
@@ -37,7 +37,11 @@ public class GeneticAlgorithm {
     public Table getTable() {
         return table;
     }
-
+    
+    public HashMap<Integer, ArrayList<Individual<PixelInformation>>> getPopulation() {
+        return population;
+    }
+    
     public void setTable(Table pTable) {
         this.table = pTable;
         HashMap<Integer, ArrayList<Individual<PixelInformation>>> populationAux = new HashMap<Integer, ArrayList<Individual<PixelInformation>>>();
@@ -54,7 +58,7 @@ public class GeneticAlgorithm {
                 Individual<PixelInformation> currentIndividual = value.get(i);
                 Sector currentSector = pTable.getPopulationArray()[currentIndividual.getGenotype()].getAtributte();
                 ArrayList<Individual<PixelInformation>> populationFromSector = populationAux.get(currentSector.getSector());
-                populationFromSector.add(new Individual<PixelInformation>(new PixelInformation(currentIndividual.getObject().getPoint(), currentSector.getSector(), currentSector.getColor()), currentIndividual.getGenotype()));
+                populationFromSector.add(new Individual<PixelInformation>(new PixelInformation(currentSector.getRandomPoint(), currentSector.getSector(), currentSector.getColor()), currentIndividual.getGenotype()));
                 populationQuantityOfTable.put(currentSector.getSector(), populationQuantityOfTable.get(currentSector.getSector()) + 1);
             }
             this.population = populationAux;
