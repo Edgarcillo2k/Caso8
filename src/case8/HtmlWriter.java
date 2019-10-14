@@ -36,50 +36,46 @@ public class HtmlWriter
 
     public void drawPolygons(String pHtmlPath, String pImagePath, String pImage2Path, String pImage3Path, double pPercentageOfPixels) {
         try {
+            File f = new File("C:\\Users\\mario\\OneDrive\\Desktop\\Caso8Netbeans\\src\\case8\\html.html");
+            BufferedWriter htmlFile = new BufferedWriter(new FileWriter(f));
             ImageReader imageReader = new ImageReader();
             Table table = imageReader.getImageTable(new File(pImagePath), pPercentageOfPixels);
             GeneticAlgorithm genetic = new GeneticAlgorithm(table);
             genetic.createPopulation(60);
+            StringBuilder builderHtml = new StringBuilder();
 
             System.out.println("Goku");
+            int svg = 0;
+            builderHtml.append("<!DOCTYPE html>\n<html>\n<body> <a href='#' id = 'nextGen' >Next Gen</a> \n<div id = 'svg" + svg + "' style = 'display:none;'>");
+
             for (int iteration = 0; iteration < 4; iteration++) {
                 genetic.run(2);
-                File f = new File("C:\\Users\\mario\\OneDrive\\Desktop\\Caso8Netbeans\\src\\case8\\htmlgoku" + iteration + ".html");
-                BufferedWriter htmlFile = new BufferedWriter(new FileWriter(f));
                 HashMap<Integer, ArrayList<Individual<PixelInformation>>> prueba = genetic.getPopulation();
-                String html = "<!DOCTYPE html>\n"
-                        + "<html>\n"
-                        + "<body>\n"
-                        + "\n"
-                        + "<svg height=\"2100\" width=\"2100\">"
-                        + "<polygon points='";
+                builderHtml.append("<svg height=\"2100\" width=\"2100\"><polygon points='");
                 for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : prueba.entrySet()) {
                     ArrayList<Individual<PixelInformation>> value = entry.getValue();
-                    int cont = 0;
-                    int cont2 = 0;
+                    int points = 0;
+                    int polygons = 0;
                     for (int pixel = 0; pixel < value.size(); pixel++) {
-                        if (cont2 < 20) {
+                        if (polygons < 10) {
                             PixelInformation actual = value.get(pixel).getObject();
-                            if (cont < 3) {
-                                html += actual.getPoint().getX() + "," + actual.getPoint().getY() + " ";
-                                cont++;
+                            if (points < 3) {
+                                builderHtml.append(actual.getPoint().getX() + "," + actual.getPoint().getY() + " ");
+                                points++;
                             } else {
                                 Color color = actual.getColor();
-                                html += "'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke-width:8\"/>\n";
-                                html += "<polygon points='";
-                                cont = 0;
-                                cont2++;
+                                builderHtml.append("'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke-width:10\"/>\n");
+                                builderHtml.append("<polygon points='");
+                                points = 0;
+                                polygons++;
                             }
                         } else {
                             break;
-
                         }
                     }
                 }
-                html += "/>";
-                html += "</svg>\n\n</body>\n</html>";
-                htmlFile.write(html);
-                htmlFile.close();
+                svg++;
+                builderHtml.append("/></svg></div><div id = 'svg" + svg + "' style = 'display:none;>");
             }
 
             System.out.println("Vegetta");
@@ -87,29 +83,23 @@ public class HtmlWriter
             genetic.setTable(table);
             for (int iteration = 0; iteration < 4; iteration++) {
                 genetic.run(2);
-                File f = new File("C:\\Users\\mario\\OneDrive\\Desktop\\Caso8Netbeans\\src\\case8\\htmlvegetta" + iteration + ".html");
-                BufferedWriter htmlFile = new BufferedWriter(new FileWriter(f));
                 HashMap<Integer, ArrayList<Individual<PixelInformation>>> prueba2 = genetic.getPopulation();
-                String html = "<!DOCTYPE html>\n"
-                        + "<html>\n"
-                        + "<body>\n"
-                        + "\n"
-                        + "<svg height=\"2100\" width=\"2100\">"
-                        + "<polygon points='";
+                builderHtml.append("<svg height=\"2100\" width=\"2100\"><polygon points='");
+
                 for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : prueba2.entrySet()) {
                     ArrayList<Individual<PixelInformation>> value = entry.getValue();
                     int cont = 0;
                     int cont2 = 0;
                     for (int pixel = 0; pixel < value.size(); pixel++) {
-                        if (cont2 < 20) {
+                        if (cont2 < 10) {
                             PixelInformation actual = value.get(pixel).getObject();
                             if (cont < 3) {
-                                html += actual.getPoint().getX() + "," + actual.getPoint().getY() + " ";
+                                builderHtml.append(actual.getPoint().getX() + "," + actual.getPoint().getY() + " ");
                                 cont++;
                             } else {
                                 Color color = actual.getColor();
-                                html += "'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke-width:8\"/>\n";
-                                html += "<polygon points='";
+                                builderHtml.append("'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke-width:10\"/>\n");
+                                builderHtml.append("<polygon points='");
                                 cont = 0;
                                 cont2++;
                             }
@@ -118,10 +108,8 @@ public class HtmlWriter
                         }
                     }
                 }
-                html += "/>";
-                html += "</svg>\n\n</body>\n</html>";
-                htmlFile.write(html);
-                htmlFile.close();
+                svg++;
+                builderHtml.append("/></svg></div><div id = 'svg" + svg + "' style = 'display:none;>");
             }
 
             System.out.println("Meliodas");
@@ -129,29 +117,23 @@ public class HtmlWriter
             genetic.setTable(table);
             for (int iteration = 0; iteration < 4; iteration++) {
                 genetic.run(2);
-                File f = new File("C:\\Users\\mario\\OneDrive\\Desktop\\Caso8Netbeans\\src\\case8\\htmlmeliodas" + iteration + ".html");
-                BufferedWriter htmlFile = new BufferedWriter(new FileWriter(f));
                 HashMap<Integer, ArrayList<Individual<PixelInformation>>> prueba3 = genetic.getPopulation();
-                String html = "<!DOCTYPE html>\n"
-                        + "<html>\n"
-                        + "<body>\n"
-                        + "\n"
-                        + "<svg height=\"2100\" width=\"2100\">"
-                        + "<polygon points='";
+                builderHtml.append("<svg height=\"2100\" width=\"2100\"><polygon points='");
+
                 for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : prueba3.entrySet()) {
                     ArrayList<Individual<PixelInformation>> value = entry.getValue();
                     int cont = 0;
                     int cont2 = 0;
                     for (int pixel = 0; pixel < value.size(); pixel++) {
-                        if (cont2 < 20) {
+                        if (cont2 < 10) {
                             PixelInformation actual = value.get(pixel).getObject();
                             if (cont < 3) {
-                                html += actual.getPoint().getX() + "," + actual.getPoint().getY() + " ";
+                                builderHtml.append(actual.getPoint().getX() + "," + actual.getPoint().getY() + " ");
                                 cont++;
                             } else {
                                 Color color = actual.getColor();
-                                html += "'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke-width:8\"/>\n";
-                                html += "<polygon points='";
+                                builderHtml.append("'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke-width:10\"/>\n");
+                                builderHtml.append("<polygon points='");
                                 cont = 0;
                                 cont2++;
                             }
@@ -160,11 +142,23 @@ public class HtmlWriter
                         }
                     }
                 }
-                html += "/>";
-                html += "</svg>\n\n</body>\n</html>";
-                htmlFile.write(html);
-                htmlFile.close();
+                svg++;
+                builderHtml.append("/></svg></div><div id = 'svg" + svg + "' style = 'display:none;>");
+
             }
+
+            builderHtml.append("\n\n</div>");
+            builderHtml.append("<script\n"
+                    + "  src=\"https://code.jquery.com/jquery-3.4.1.min.js\"\n"
+                    + "  integrity=\"sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=\"\n"
+                    + "  crossorigin=\"anonymous\"></script>");
+            builderHtml.append("<script src = js/jQuery.js></script>");
+            builderHtml.append("</body>\n</html>");
+            String html = builderHtml.toString();
+            htmlFile.write(html);
+            htmlFile.close();
+            System.out.println(html);
+            System.out.println(svg);
 
         } catch (IOException e) {
             e.printStackTrace();
