@@ -43,69 +43,58 @@ public class HtmlWriter
             GeneticAlgorithm genetic = new GeneticAlgorithm(table);
             genetic.createPopulation(60);
             StringBuilder builderHtml = new StringBuilder();
-
+            
             System.out.println("Goku");
             int svg = 0;
             builderHtml.append("<!DOCTYPE html>\n<html>\n<body> <a href='#' id = 'nextGen' >Next Gen</a> \n<div id = 'svg" + svg + "' style = 'display:visible;'>");
 
-            for (int iteration = 0; iteration < 4; iteration++) {
+            for (int iteration = 0; iteration < 5; iteration++) {
                 genetic.run(2);
-                HashMap<Integer, ArrayList<Individual<PixelInformation>>> prueba = genetic.getPopulation();
+                HashMap<Integer, ArrayList<Individual<PixelInformation>>> hashPerGeneration = genetic.getPopulation();
                 builderHtml.append("<svg height=\"2100\" width=\"2100\"><polygon points='");
-                for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : prueba.entrySet()) {
-                    ArrayList<Individual<PixelInformation>> value = entry.getValue();
+                for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : hashPerGeneration.entrySet()) {
+                    ArrayList<Individual<PixelInformation>> sectorToVisualize = entry.getValue();
                     int points = 0;
-                    int polygons = 0;
-                    for (int pixel = 0; pixel < value.size(); pixel++) {
-                        if (polygons < 3) {
-                            PixelInformation actual = value.get(pixel).getObject();
-                            if (points < 3) {
-                                builderHtml.append(actual.getPoint().getX() + "," + actual.getPoint().getY() + " ");
-                                points++;
-                            } else {
-                                Color color = actual.getColor();
-                                builderHtml.append("'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke-width:10\"/>\n");
-                                builderHtml.append("<polygon points='");
-                                points = 0;
-                                polygons++;
-                            }
+                    for (int pixel = 0; pixel < sectorToVisualize.size(); pixel++) {
+                        PixelInformation currentPixel = sectorToVisualize.get(pixel).getObject();
+                        if (points < 8) {
+                            builderHtml.append(currentPixel.getPoint().getX() + "," + currentPixel.getPoint().getY() + " ");
+                            points++;
                         } else {
-                            break;
+                            Color color = currentPixel.getColor();
+                            builderHtml.append("'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke-width:1\"/>\n");
+                            builderHtml.append("<polygon points='");
+                            points = 0;
                         }
                     }
                 }
                 svg++;
                 builderHtml.append("'style=\"fill:white\"/></svg></div>\n\n<div id = 'svg" + svg + "' style = 'display:none;'>");
             }
-
+            
             System.out.println("Vegetta");
             table = imageReader.getImageTable(new File(pImage2Path), pPercentageOfPixels);
             genetic.setTable(table);
-            for (int iteration = 0; iteration < 4; iteration++) {
+            for (int iteration = 0; iteration < 5; iteration++) {
                 genetic.run(2);
-                HashMap<Integer, ArrayList<Individual<PixelInformation>>> prueba2 = genetic.getPopulation();
+                HashMap<Integer, ArrayList<Individual<PixelInformation>>> HashPerGeneration2 = genetic.getPopulation();
                 builderHtml.append("<svg height=\"2100\" width=\"2100\"><polygon points='");
 
-                for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : prueba2.entrySet()) {
-                    ArrayList<Individual<PixelInformation>> value = entry.getValue();
-                    int cont = 0;
-                    int cont2 = 0;
-                    for (int pixel = 0; pixel < value.size(); pixel++) {
-                        if (cont2 < 3) {
-                            PixelInformation actual = value.get(pixel).getObject();
-                            if (cont < 3) {
-                                builderHtml.append(actual.getPoint().getX() + "," + actual.getPoint().getY() + " ");
-                                cont++;
-                            } else {
-                                Color color = actual.getColor();
-                                builderHtml.append("'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke-width:10\"/>\n");
-                                builderHtml.append("<polygon points='");
-                                cont = 0;
-                                cont2++;
-                            }
+                for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : HashPerGeneration2.entrySet()) {
+                    ArrayList<Individual<PixelInformation>> sectorToVisualize = entry.getValue();
+                    int points = 0;
+                    for (int pixel = 0; pixel < sectorToVisualize.size(); pixel++) {
+                        PixelInformation currentPixel = sectorToVisualize.get(pixel).getObject();
+                        if (points < 8) {
+                            builderHtml.append(currentPixel.getPoint().getX() + "," + currentPixel.getPoint().getY() + " ");
+                            points++;
                         } else {
-                            break;
+                            Color color = currentPixel.getColor();
+                            builderHtml.append("'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke-width:1\"/>\n");
+                            builderHtml.append("<polygon points='");
+                            points = 0;
                         }
+
                     }
                 }
                 svg++;
@@ -115,30 +104,24 @@ public class HtmlWriter
             System.out.println("Meliodas");
             table = imageReader.getImageTable(new File(pImage3Path), pPercentageOfPixels);
             genetic.setTable(table);
-            for (int iteration = 0; iteration < 4; iteration++) {
+            for (int iteration = 0; iteration < 5; iteration++) {
                 genetic.run(2);
-                HashMap<Integer, ArrayList<Individual<PixelInformation>>> prueba3 = genetic.getPopulation();
+                HashMap<Integer, ArrayList<Individual<PixelInformation>>> HashPerGeneration3 = genetic.getPopulation();
                 builderHtml.append("<svg height=\"2100\" width=\"2100\"><polygon points='");
 
-                for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : prueba3.entrySet()) {
-                    ArrayList<Individual<PixelInformation>> value = entry.getValue();
-                    int cont = 0;
-                    int cont2 = 0;
-                    for (int pixel = 0; pixel < value.size(); pixel++) {
-                        if (cont2 < 3) {
-                            PixelInformation actual = value.get(pixel).getObject();
-                            if (cont < 3) {
-                                builderHtml.append(actual.getPoint().getX() + "," + actual.getPoint().getY() + " ");
-                                cont++;
-                            } else {
-                                Color color = actual.getColor();
-                                builderHtml.append("'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke-width:10\"/>\n");
-                                builderHtml.append("<polygon points='");
-                                cont = 0;
-                                cont2++;
-                            }
+                for (Map.Entry<Integer, ArrayList<Individual<PixelInformation>>> entry : HashPerGeneration3.entrySet()) {
+                    ArrayList<Individual<PixelInformation>> sectorToVisualize = entry.getValue();
+                    int point = 0;
+                    for (int pixel = 0; pixel < sectorToVisualize.size(); pixel++) {
+                        PixelInformation currentPixel = sectorToVisualize.get(pixel).getObject();
+                        if (point < 8) {
+                            builderHtml.append(currentPixel.getPoint().getX() + "," + currentPixel.getPoint().getY() + " ");
+                            point++;
                         } else {
-                            break;
+                            Color color = currentPixel.getColor();
+                            builderHtml.append("'style=\"fill:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke:rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ");stroke-width:1\"/>\n");
+                            builderHtml.append("<polygon points='");
+                            point = 0;
                         }
                     }
                 }
@@ -146,7 +129,6 @@ public class HtmlWriter
                 builderHtml.append("'style=\"fill:white\"/></svg></div>\n\n<div id = 'svg" + svg + "' style = 'display:none;'>");
 
             }
-
             builderHtml.append("\n\n</div></body>");
             builderHtml.append("<script\n"
                     + "  src=\"https://code.jquery.com/jquery-3.4.1.min.js\"\n"
@@ -157,9 +139,6 @@ public class HtmlWriter
             String html = builderHtml.toString();
             htmlFile.write(html);
             htmlFile.close();
-//            System.out.println(html);
-//            System.out.println(svg);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
